@@ -1,0 +1,1618 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>HerdenPro – Vollständige Funktionsübersicht</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:       #060e05;
+  --bg2:      #0b1a09;
+  --bg3:      #111f0f;
+  --gold:     #d4a84b;
+  --gold2:    #f0c060;
+  --green:    #4db84e;
+  --green2:   #2d8a2e;
+  --text:     #e8e0cc;
+  --text2:    #98b078;
+  --text3:    #4e6840;
+  --red:      #d44b4b;
+  --orange:   #d4844b;
+  --blue:     #4b8fd4;
+  --purple:   #a04bc8;
+  --teal:     #4bbfb8;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 400;
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+/* ── Noise overlay ── */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.04'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 0;
+  opacity: .5;
+}
+
+/* ── Hero ── */
+.hero {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 4rem 2rem;
+  overflow: hidden;
+}
+
+.hero-bg {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 60% 50% at 50% 0%, rgba(77,184,78,.18) 0%, transparent 70%),
+    radial-gradient(ellipse 40% 40% at 20% 80%, rgba(212,168,75,.1) 0%, transparent 60%),
+    radial-gradient(ellipse 30% 30% at 80% 60%, rgba(77,184,78,.07) 0%, transparent 60%);
+}
+
+.hero-grid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(77,184,78,.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(77,184,78,.04) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: .5rem;
+  border: 1px solid rgba(212,168,75,.3);
+  border-radius: 100px;
+  padding: .35rem 1rem;
+  font-size: .78rem;
+  color: var(--gold);
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  margin-bottom: 1.5rem;
+  background: rgba(212,168,75,.05);
+  backdrop-filter: blur(8px);
+  animation: fadeUp .8s ease both;
+}
+
+.hero-title {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(3rem, 8vw, 7rem);
+  font-weight: 900;
+  line-height: 1;
+  letter-spacing: -.02em;
+  animation: fadeUp .8s .1s ease both;
+}
+
+.hero-title span {
+  background: linear-gradient(135deg, var(--gold2) 0%, var(--green) 60%, var(--gold) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.hero-sub {
+  font-size: clamp(1rem, 2.5vw, 1.4rem);
+  color: var(--text2);
+  margin-top: 1.2rem;
+  max-width: 600px;
+  font-weight: 300;
+  animation: fadeUp .8s .2s ease both;
+}
+
+.hero-stats {
+  display: flex;
+  gap: 2rem;
+  margin-top: 3rem;
+  flex-wrap: wrap;
+  justify-content: center;
+  animation: fadeUp .8s .3s ease both;
+}
+
+.hero-stat {
+  text-align: center;
+}
+
+.hero-stat-num {
+  font-family: 'Playfair Display', serif;
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: var(--gold);
+  line-height: 1;
+}
+
+.hero-stat-label {
+  font-size: .75rem;
+  color: var(--text3);
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  margin-top: .3rem;
+}
+
+.hero-scroll {
+  position: absolute;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: .4rem;
+  color: var(--text3);
+  font-size: .72rem;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  animation: fadeUp 1s .5s ease both;
+}
+
+.scroll-line {
+  width: 1px;
+  height: 40px;
+  background: linear-gradient(to bottom, var(--gold), transparent);
+  animation: scrollPulse 2s ease-in-out infinite;
+}
+
+/* ── Phone Mockup ── */
+.phone-mockup {
+  position: relative;
+  width: 220px;
+  margin: 2.5rem auto 0;
+  animation: fadeUp .8s .25s ease both;
+}
+
+.phone-frame {
+  background: #0a0a0a;
+  border: 2px solid rgba(255,255,255,.12);
+  border-radius: 32px;
+  padding: 12px;
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,.05),
+    0 40px 80px rgba(0,0,0,.8),
+    0 0 60px rgba(77,184,78,.1);
+  overflow: hidden;
+}
+
+.phone-screen {
+  background: #0a1508;
+  border-radius: 22px;
+  overflow: hidden;
+  aspect-ratio: 9/19;
+  display: flex;
+  flex-direction: column;
+}
+
+.phone-topbar {
+  background: #0f1e0c;
+  padding: .4rem .6rem;
+  display: flex;
+  align-items: center;
+  gap: .4rem;
+  border-bottom: 1px solid #1e3318;
+  flex-shrink: 0;
+}
+
+.phone-topbar-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--green);
+  box-shadow: 0 0 6px var(--green);
+}
+
+.phone-topbar-title {
+  font-size: .55rem;
+  color: #d4a84b;
+  font-weight: 600;
+  flex: 1;
+}
+
+.phone-content {
+  flex: 1;
+  padding: .5rem .4rem;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: .3rem;
+}
+
+.phone-saison-bar {
+  background: linear-gradient(135deg, #0f2d0f, #1a3d1a);
+  border: 1px solid rgba(77,184,78,.3);
+  border-radius: 8px;
+  padding: .35rem .5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.phone-saison-text { font-size: .45rem; color: #4db84e; font-weight: 600; }
+.phone-saison-num { font-size: .55rem; color: #d4a84b; font-weight: 700; }
+
+.phone-weather {
+  background: #111f0f;
+  border: 1px solid #1e3318;
+  border-radius: 8px;
+  padding: .35rem .5rem;
+  display: flex;
+  align-items: center;
+  gap: .4rem;
+}
+
+.phone-temp { font-size: .6rem; color: #e8e0cc; font-weight: 600; }
+.phone-weather-sub { font-size: .38rem; color: #4e6840; }
+
+.phone-cards {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: .25rem;
+}
+
+.phone-card {
+  background: #111f0f;
+  border: 1px solid #1e3318;
+  border-radius: 8px;
+  padding: .4rem;
+  text-align: center;
+}
+
+.phone-card-icon { font-size: .8rem; }
+.phone-card-num { font-size: .65rem; color: #d4a84b; font-weight: 700; }
+.phone-card-label { font-size: .35rem; color: #4e6840; }
+
+.phone-nav {
+  background: #0f1e0c;
+  border-top: 1px solid #1e3318;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  padding: .3rem 0;
+  flex-shrink: 0;
+}
+
+.phone-nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.phone-nav-icon { font-size: .65rem; }
+.phone-nav-label { font-size: .3rem; color: #4e6840; }
+.phone-nav-item.active .phone-nav-label { color: #d4a84b; }
+.phone-nav-item.active .phone-nav-icon { filter: drop-shadow(0 0 3px rgba(212,168,75,.6)); }
+
+/* ── TOC Nav ── */
+.toc-nav {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(6,14,5,.92);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(77,184,78,.12);
+  padding: .8rem 2rem;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.toc-nav::-webkit-scrollbar { display: none; }
+
+.toc-inner {
+  display: flex;
+  gap: 1.5rem;
+  align-items: center;
+  min-width: max-content;
+}
+
+.toc-logo {
+  font-family: 'Playfair Display', serif;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--gold);
+  white-space: nowrap;
+  margin-right: .5rem;
+}
+
+.toc-link {
+  font-size: .78rem;
+  color: var(--text3);
+  text-decoration: none;
+  white-space: nowrap;
+  transition: color .2s;
+  letter-spacing: .02em;
+}
+
+.toc-link:hover { color: var(--gold); }
+
+/* ── Sections ── */
+.section {
+  padding: 5rem 1.5rem;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.section-label {
+  font-size: .72rem;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--green);
+  margin-bottom: .8rem;
+  font-weight: 600;
+}
+
+.section-title {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(1.8rem, 4vw, 3rem);
+  font-weight: 700;
+  line-height: 1.15;
+  margin-bottom: 1rem;
+}
+
+.section-sub {
+  font-size: 1.05rem;
+  color: var(--text2);
+  max-width: 600px;
+  font-weight: 300;
+  line-height: 1.7;
+  margin-bottom: 3rem;
+}
+
+/* ── Module Grid ── */
+.module-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.2rem;
+}
+
+.module-card {
+  background: var(--bg2);
+  border: 1px solid rgba(255,255,255,.06);
+  border-radius: 16px;
+  padding: 1.4rem;
+  transition: transform .25s, border-color .25s, box-shadow .25s;
+  position: relative;
+  overflow: hidden;
+}
+
+.module-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: var(--accent, var(--green));
+  opacity: 0;
+  transition: opacity .25s;
+}
+
+.module-card:hover {
+  transform: translateY(-3px);
+  border-color: rgba(212,168,75,.2);
+  box-shadow: 0 12px 40px rgba(0,0,0,.4);
+}
+
+.module-card:hover::before { opacity: 1; }
+
+.module-icon {
+  font-size: 2rem;
+  margin-bottom: .8rem;
+  display: block;
+}
+
+.module-name {
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: .5rem;
+}
+
+.module-desc {
+  font-size: .85rem;
+  color: var(--text2);
+  line-height: 1.6;
+  margin-bottom: .8rem;
+}
+
+.module-features {
+  display: flex;
+  flex-direction: column;
+  gap: .25rem;
+}
+
+.feature-item {
+  font-size: .78rem;
+  color: var(--text3);
+  display: flex;
+  align-items: flex-start;
+  gap: .4rem;
+  line-height: 1.4;
+}
+
+.feature-item::before {
+  content: '›';
+  color: var(--accent, var(--green));
+  flex-shrink: 0;
+  margin-top: .05em;
+}
+
+/* ── Big Feature ── */
+.big-feature {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 3rem;
+  align-items: center;
+  padding: 4rem 1.5rem;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.big-feature.reverse { direction: rtl; }
+.big-feature.reverse > * { direction: ltr; }
+
+.bf-text .section-label { margin-bottom: .6rem; }
+.bf-text .section-title { font-size: clamp(1.5rem, 3vw, 2.2rem); }
+
+.bf-features {
+  margin-top: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: .6rem;
+}
+
+.bf-feature {
+  display: flex;
+  gap: .8rem;
+  align-items: flex-start;
+  background: var(--bg2);
+  border: 1px solid rgba(255,255,255,.05);
+  border-radius: 10px;
+  padding: .7rem .9rem;
+  transition: border-color .2s;
+}
+
+.bf-feature:hover { border-color: rgba(212,168,75,.2); }
+
+.bf-feature-icon {
+  font-size: 1.2rem;
+  flex-shrink: 0;
+}
+
+.bf-feature-text { font-size: .83rem; color: var(--text2); line-height: 1.5; }
+.bf-feature-text strong { color: var(--text); display: block; font-size: .88rem; margin-bottom: .15rem; }
+
+/* ── Screen mockup large ── */
+.screen-mockup {
+  background: var(--bg3);
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 30px 80px rgba(0,0,0,.6), 0 0 0 1px rgba(255,255,255,.04);
+}
+
+.screen-topbar {
+  background: #0f1e0c;
+  padding: .6rem 1rem;
+  display: flex;
+  align-items: center;
+  gap: .6rem;
+  border-bottom: 1px solid #1e3318;
+}
+
+.screen-dot { width: 8px; height: 8px; border-radius: 50%; }
+.screen-dot.green { background: var(--green); box-shadow: 0 0 8px var(--green); }
+.screen-dot.gold { background: var(--gold); }
+
+.screen-title {
+  font-size: .75rem;
+  color: var(--gold);
+  font-weight: 600;
+  flex: 1;
+}
+
+.screen-body {
+  padding: 1rem;
+  min-height: 200px;
+}
+
+/* ── Divider ── */
+.divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(77,184,78,.2), transparent);
+  margin: 0 1.5rem;
+}
+
+/* ── Tag colors ── */
+.tag {
+  display: inline-flex;
+  align-items: center;
+  gap: .3rem;
+  font-size: .68rem;
+  padding: 2px 8px;
+  border-radius: 100px;
+  font-weight: 600;
+  letter-spacing: .03em;
+}
+
+.tag-green { background: rgba(77,184,78,.15); color: var(--green); border: 1px solid rgba(77,184,78,.3); }
+.tag-gold  { background: rgba(212,168,75,.12); color: var(--gold); border: 1px solid rgba(212,168,75,.25); }
+.tag-red   { background: rgba(212,75,75,.15); color: var(--red); border: 1px solid rgba(212,75,75,.3); }
+.tag-blue  { background: rgba(75,143,212,.15); color: var(--blue); border: 1px solid rgba(75,143,212,.3); }
+.tag-orange{ background: rgba(212,132,75,.15); color: var(--orange); border: 1px solid rgba(212,132,75,.3); }
+
+/* ── Role table ── */
+.role-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.role-card {
+  background: var(--bg2);
+  border: 1px solid rgba(255,255,255,.06);
+  border-radius: 12px;
+  padding: 1.2rem;
+}
+
+.role-name {
+  font-size: .72rem;
+  text-transform: uppercase;
+  letter-spacing: .1em;
+  margin-bottom: .6rem;
+  font-weight: 600;
+}
+
+.role-item {
+  font-size: .78rem;
+  color: var(--text2);
+  padding: .2rem 0;
+  display: flex;
+  align-items: center;
+  gap: .4rem;
+}
+
+.role-item::before { content: '✓'; font-size: .65rem; }
+
+/* ── PWA box ── */
+.pwa-box {
+  background: linear-gradient(135deg, var(--bg2), var(--bg3));
+  border: 1px solid rgba(212,168,75,.2);
+  border-radius: 20px;
+  padding: 2.5rem;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 2rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.pwa-box::before {
+  content: '';
+  position: absolute;
+  top: -50px; right: -50px;
+  width: 200px; height: 200px;
+  background: radial-gradient(circle, rgba(212,168,75,.1), transparent 70%);
+}
+
+.pwa-item-icon { font-size: 1.8rem; margin-bottom: .5rem; }
+.pwa-item-title { font-size: .88rem; font-weight: 600; margin-bottom: .3rem; }
+.pwa-item-text { font-size: .78rem; color: var(--text2); line-height: 1.5; }
+
+/* ── Footer ── */
+footer {
+  border-top: 1px solid rgba(77,184,78,.1);
+  padding: 3rem 2rem;
+  text-align: center;
+  color: var(--text3);
+  font-size: .8rem;
+}
+
+footer strong { color: var(--gold); font-family: 'Playfair Display', serif; font-size: 1rem; }
+
+/* ── Animations ── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(24px); }
+  to   { opacity: 1; transform: none; }
+}
+
+@keyframes scrollPulse {
+  0%,100% { transform: scaleY(1); opacity: .6; }
+  50% { transform: scaleY(.6); opacity: 1; }
+}
+
+@keyframes float {
+  0%,100% { transform: translateY(0); }
+  50%      { transform: translateY(-8px); }
+}
+
+/* ── Scroll reveal ── */
+.reveal {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity .7s ease, transform .7s ease;
+}
+
+.reveal.visible {
+  opacity: 1;
+  transform: none;
+}
+
+/* ── Highlight bar ── */
+.highlight-bar {
+  display: inline-flex;
+  align-items: center;
+  gap: .6rem;
+  background: rgba(77,184,78,.08);
+  border: 1px solid rgba(77,184,78,.2);
+  border-radius: 100px;
+  padding: .4rem 1rem;
+  font-size: .8rem;
+  color: var(--green);
+  margin-bottom: 3rem;
+}
+
+/* ── Dashboard mockup ── */
+.dash-mockup {
+  background: #0a1508;
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid #1e3318;
+  font-size: .75rem;
+}
+
+.dash-saison {
+  background: linear-gradient(135deg, #0f2d0f, #1a3d1a);
+  padding: .6rem .8rem;
+  border-bottom: 1px solid #1e3318;
+  display: flex;
+  justify-content: space-between;
+}
+
+.dash-weather {
+  background: #111f0f;
+  padding: .5rem .8rem;
+  border-bottom: 1px solid #1e3318;
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+  font-size: .7rem;
+}
+
+.dash-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: .4rem;
+  padding: .5rem;
+}
+
+.dash-card {
+  background: #111f0f;
+  border: 1px solid #1e3318;
+  border-radius: 10px;
+  padding: .6rem;
+  text-align: center;
+}
+
+.dash-num { font-size: 1.4rem; font-weight: 700; color: #d4a84b; }
+.dash-lbl { font-size: .6rem; color: #4e6840; }
+
+.dash-alert {
+  margin: 0 .5rem .5rem;
+  background: rgba(200,60,60,.1);
+  border: 1px solid rgba(200,60,60,.3);
+  border-radius: 8px;
+  padding: .4rem .6rem;
+  font-size: .65rem;
+  color: #d44b4b;
+}
+
+.dash-ok {
+  margin: 0 .5rem .5rem;
+  background: rgba(77,184,78,.07);
+  border: 1px solid rgba(77,184,78,.2);
+  border-radius: 8px;
+  padding: .4rem .6rem;
+  font-size: .65rem;
+  color: #4db84e;
+  text-align: center;
+}
+
+/* ── Responsive ── */
+@media (max-width: 700px) {
+  .big-feature { grid-template-columns: 1fr; }
+  .big-feature.reverse { direction: ltr; }
+  .pwa-box { grid-template-columns: 1fr; }
+  .hero-stats { gap: 1.5rem; }
+}
+</style>
+</head>
+<body>
+
+<!-- ════════════════════════════════════════════════
+     HERO
+════════════════════════════════════════════════ -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-grid"></div>
+
+  <div class="hero-badge" style="position:relative;z-index:1">
+    <span>🐄</span> Engineering by LN Machinery
+  </div>
+
+  <h1 class="hero-title" style="position:relative;z-index:1">
+    Herden<span>Pro</span>
+  </h1>
+
+  <p class="hero-sub" style="position:relative;z-index:1">
+    Die vollständige Almwirtschafts-App für professionelle Herdenverwaltung auf der Alm. Alles was du brauchst – offline-fähig, in einer App.
+  </p>
+
+  <!-- Phone Mockup -->
+  <div class="phone-mockup" style="position:relative;z-index:1;animation:float 4s ease-in-out infinite">
+    <div class="phone-frame">
+      <div class="phone-screen">
+        <div class="phone-topbar">
+          <div class="phone-topbar-dot"></div>
+          <div class="phone-topbar-title">🐄 HerdenPro</div>
+          <div style="font-size:.4rem;color:#4e6840">Engineering by LN Machinery</div>
+        </div>
+        <div class="phone-content">
+          <div class="phone-saison-bar">
+            <div>
+              <div class="phone-saison-text">▲ SAISON AKTIV</div>
+              <div style="font-size:.4rem;color:#98b078">Nassereinalm · Tag 2</div>
+            </div>
+            <div class="phone-saison-num">18/19<br><span style="font-size:.35rem;color:#4e6840">oben</span></div>
+          </div>
+          <div class="phone-weather">
+            <span style="font-size:.9rem">⛅</span>
+            <div>
+              <div class="phone-temp">24°C Bedeckt</div>
+              <div class="phone-weather-sub">Landeck · Gefühlt 21°C · Wind 8 km/h</div>
+            </div>
+          </div>
+          <div class="phone-cards">
+            <div class="phone-card">
+              <div class="phone-card-icon">🐄</div>
+              <div class="phone-card-num">19</div>
+              <div class="phone-card-label">Kühe</div>
+            </div>
+            <div class="phone-card">
+              <div class="phone-card-icon">⚕</div>
+              <div class="phone-card-num" style="color:#d44b4b">1</div>
+              <div class="phone-card-label">Behandlung</div>
+            </div>
+            <div class="phone-card">
+              <div class="phone-card-icon">🥛</div>
+              <div class="phone-card-num">–</div>
+              <div class="phone-card-label">Heute</div>
+            </div>
+            <div class="phone-card">
+              <div class="phone-card-icon">✓</div>
+              <div class="phone-card-num">18</div>
+              <div class="phone-card-label">Heute Weide</div>
+            </div>
+          </div>
+          <div style="font-size:.42rem;color:#4db84e;text-align:center;margin-top:.1rem">✓ Keine offenen Aktionen</div>
+        </div>
+        <div class="phone-nav">
+          <div class="phone-nav-item active">
+            <div class="phone-nav-icon">⌂</div>
+            <div class="phone-nav-label" style="color:#d4a84b">Start</div>
+          </div>
+          <div class="phone-nav-item">
+            <div class="phone-nav-icon">🐄</div>
+            <div class="phone-nav-label">Herde</div>
+          </div>
+          <div class="phone-nav-item">
+            <div class="phone-nav-icon">▲</div>
+            <div class="phone-nav-label">Saison</div>
+          </div>
+          <div class="phone-nav-item">
+            <div class="phone-nav-icon">🥛</div>
+            <div class="phone-nav-label">Milch</div>
+          </div>
+          <div class="phone-nav-item">
+            <div class="phone-nav-icon">⋯</div>
+            <div class="phone-nav-label">Mehr</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="hero-stats" style="position:relative;z-index:1">
+    <div class="hero-stat">
+      <div class="hero-stat-num">22+</div>
+      <div class="hero-stat-label">Module</div>
+    </div>
+    <div class="hero-stat">
+      <div class="hero-stat-num">4</div>
+      <div class="hero-stat-label">Benutzerrollen</div>
+    </div>
+    <div class="hero-stat">
+      <div class="hero-stat-num">100%</div>
+      <div class="hero-stat-label">Offline-fähig</div>
+    </div>
+    <div class="hero-stat">
+      <div class="hero-stat-num">EU</div>
+      <div class="hero-stat-label">Firebase-Server</div>
+    </div>
+  </div>
+
+  <div class="hero-scroll">
+    <div class="scroll-line"></div>
+    Entdecken
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════
+     TOC NAV
+════════════════════════════════════════════════ -->
+<nav class="toc-nav">
+  <div class="toc-inner">
+    <div class="toc-logo">🐄 HerdenPro</div>
+    <a href="#dashboard" class="toc-link">Dashboard</a>
+    <a href="#herde" class="toc-link">Herde</a>
+    <a href="#saison" class="toc-link">Saison</a>
+    <a href="#milch" class="toc-link">Milch</a>
+    <a href="#behandlung" class="toc-link">Behandlung</a>
+    <a href="#besamung" class="toc-link">Besamung</a>
+    <a href="#weide" class="toc-link">Weide</a>
+    <a href="#zaehlung" class="toc-link">Zählung</a>
+    <a href="#weitere" class="toc-link">Weitere Module</a>
+    <a href="#rollen" class="toc-link">Rollen</a>
+    <a href="#pwa" class="toc-link">PWA</a>
+  </div>
+</nav>
+
+<!-- ════════════════════════════════════════════════
+     DASHBOARD
+════════════════════════════════════════════════ -->
+<section class="section reveal" id="dashboard">
+  <div class="section-label">Startseite</div>
+  <h2 class="section-title">Dashboard – Alles auf einen Blick</h2>
+  <p class="section-sub">Das Dashboard zeigt den aktuellen Zustand der Alm. Alle wichtigen Informationen und offene Aufgaben auf einen Blick – ohne durch Menüs suchen zu müssen.</p>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:2rem;align-items:start">
+    <div>
+      <div class="bf-features">
+        <div class="bf-feature">
+          <div class="bf-feature-icon">🟢</div>
+          <div class="bf-feature-text">
+            <strong>Saison-Status Banner</strong>
+            Zeigt Almname, aktuellen Tag der Saison und wie viele Kühe oben/gesamt sind. Grüner Balken wenn aktiv.
+          </div>
+        </div>
+        <div class="bf-feature">
+          <div class="bf-feature-icon">⛅</div>
+          <div class="bf-feature-text">
+            <strong>Wetter-Card</strong>
+            Aktuelle Temperatur, Wetterlage, Gefühlte Temperatur und Windgeschwindigkeit. Ort wählbar in Einstellungen (15 Tiroler/Vorarlberger/Kärntner Städte).
+          </div>
+        </div>
+        <div class="bf-feature">
+          <div class="bf-feature-icon">📊</div>
+          <div class="bf-feature-text">
+            <strong>Stats-Grid</strong>
+            4 klickbare Kacheln: Kühe gesamt, aktive Behandlungen, heutige Milch, Kühe auf Weide heute. Antippen navigiert direkt zum Modul.
+          </div>
+        </div>
+        <div class="bf-feature">
+          <div class="bf-feature-icon">⚠</div>
+          <div class="bf-feature-text">
+            <strong>Offene Aktionen</strong>
+            Automatische Warnungen: Wartezeiten (🔴 vorbei / 🟠 heute-morgen / 🟡 laufend), Brunst-Kontrolle Tag 19–23, baldige Geburten (≤14 Tage), Tränke nicht kontrolliert.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Dashboard Mockup -->
+    <div class="dash-mockup">
+      <div class="dash-saison">
+        <div>
+          <div style="font-size:.65rem;color:#4db84e;font-weight:700">▲ SAISON AKTIV</div>
+          <div style="font-size:.58rem;color:#98b078">Nassereinalm · Tag 2</div>
+        </div>
+        <div style="text-align:right">
+          <div style="font-size:.85rem;color:#d4a84b;font-weight:700">18/19</div>
+          <div style="font-size:.5rem;color:#4e6840">oben</div>
+        </div>
+      </div>
+      <div class="dash-weather">
+        <span style="font-size:1.2rem">⛅</span>
+        <div>
+          <div style="font-size:.72rem;color:#e8e0cc;font-weight:600">24°C Bedeckt</div>
+          <div style="font-size:.58rem;color:#4e6840">Landeck · Gefühlt 21°C · Wind 8 km/h</div>
+        </div>
+        <div style="margin-left:auto;font-size:.55rem;color:#4e6840">16:09 Uhr</div>
+      </div>
+      <div class="dash-grid">
+        <div class="dash-card">
+          <div style="font-size:1.2rem">🐄</div>
+          <div class="dash-num">19</div>
+          <div class="dash-lbl">Kühe</div>
+        </div>
+        <div class="dash-card">
+          <div style="font-size:1.2rem">⚕</div>
+          <div class="dash-num" style="color:#d44b4b">1</div>
+          <div class="dash-lbl">Behandlung</div>
+        </div>
+        <div class="dash-card">
+          <div style="font-size:1.2rem">🥛</div>
+          <div class="dash-num" style="color:#4e6840">–</div>
+          <div class="dash-lbl">Heute</div>
+        </div>
+        <div class="dash-card">
+          <div style="font-size:1.2rem">✓</div>
+          <div class="dash-num">18</div>
+          <div class="dash-lbl">Heute Weide</div>
+        </div>
+      </div>
+      <div class="dash-alert">⚕ WZ Milch vorbei · #7 Bella</div>
+      <div style="margin:0 .5rem .5rem;background:rgba(160,80,200,.08);border:1px solid rgba(160,80,200,.25);border-radius:8px;padding:.4rem .6rem;font-size:.65rem;color:#c080e8">🔁 Brunst-Kontrolle · #12 Rosa · Tag 21</div>
+      <div class="dash-ok">✓ Keine weiteren offenen Aktionen</div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ════════════════════════════════════════════════
+     HERDE
+════════════════════════════════════════════════ -->
+<section class="section reveal" id="herde">
+  <div class="section-label">Kernmodul</div>
+  <h2 class="section-title">Herde – Alle Kühe im Griff</h2>
+  <p class="section-sub">Vollständige Verwaltung aller Tiere: anlegen, bearbeiten, filtern. Pro Kuh eine eigene Detailseite mit allen Informationen, Behandlungen, Besamungen und Milchdaten.</p>
+
+  <div class="module-grid">
+    <div class="module-card" style="--accent:#4db84e">
+      <span class="module-icon">📋</span>
+      <div class="module-name">Kuh-Liste</div>
+      <div class="module-desc">Übersicht aller Kühe mit Schnellinfo. Filter nach Bauer oder Gruppe per Chip-Buttons. Live-Suche nach Nummer, Name, Bauer, Ohrmarke.</div>
+      <div class="module-features">
+        <div class="feature-item">Ohrmarkennummer, Rasse, Gruppe, Bauer</div>
+        <div class="feature-item">Status-Tags: ⛰ auf Alm, ⚕ aktive Behandlung, 🐮 trächtig</div>
+        <div class="feature-item">Laktationsstatus: Melkend, Trocken, Tragend, Jungtier</div>
+        <div class="feature-item">Import via Excel / VBA-Makro</div>
+      </div>
+    </div>
+
+    <div class="module-card" style="--accent:#d4a84b">
+      <span class="module-icon">🐄</span>
+      <div class="module-name">Kuh-Detailseite</div>
+      <div class="module-desc">Animierte Hero-Card mit allen Infos zur Kuh. Foto, Sparkline der Milchleistung, aktive Besamung als Banner, Behandlungs-Badge.</div>
+      <div class="module-features">
+        <div class="feature-item">📷 Foto hochladen (automatisch komprimiert auf max 800px)</div>
+        <div class="feature-item">QR-Code generieren – beim Scannen öffnet direkt das Profil</div>
+        <div class="feature-item">Stats: Weidetage, aktive Behandlungen, Besamungsanzahl</div>
+        <div class="feature-item">Milch-Sparkline der letzten 14 Einträge pro Kuh</div>
+        <div class="feature-item">Schnellzugriff: + Behandlung, + Besamung, ↓ Abtreiben</div>
+      </div>
+    </div>
+
+    <div class="module-card" style="--accent:#4b8fd4">
+      <span class="module-icon">🏷</span>
+      <div class="module-name">Gruppen</div>
+      <div class="module-desc">Kühe in Gruppen einteilen (z.B. nach Bauer, Weidegruppe, Alter). Gruppen erhalten Farbe und werden überall als Filter angeboten.</div>
+      <div class="module-features">
+        <div class="feature-item">Gruppen anlegen mit Name und Farbe</div>
+        <div class="feature-item">Beim Excel-Import werden Gruppen automatisch angelegt</div>
+        <div class="feature-item">Filter in Herde, Zählung und Weide nach Gruppe</div>
+      </div>
+    </div>
+
+    <div class="module-card" style="--accent:#a04bc8">
+      <span class="module-icon">👥</span>
+      <div class="module-name">Bauern-Menü</div>
+      <div class="module-desc">Alle Bauern mit ihren Kühen auf der Alm. Pro Bauer: Kontaktdaten, Anzahl Kühe, Alpungstage-Übersicht.</div>
+      <div class="module-features">
+        <div class="feature-item">Alle Kühe eines Bauern auf einen Blick</div>
+        <div class="feature-item">Direktlink zu Kontaktdaten</div>
+        <div class="feature-item">Basis für Alpungs-Abrechnung</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ════════════════════════════════════════════════
+     SAISON
+════════════════════════════════════════════════ -->
+<section class="section reveal" id="saison">
+  <div class="section-label">Saisonmanagement</div>
+  <h2 class="section-title">Saison – Auf- und Abtrieb verwalten</h2>
+  <p class="section-sub">Das Herzstück der Almwirtschaft: Saison starten, Kühe auftreieben, vorzeitig abtreiben, Saison beenden. Drei klar getrennte Kategorien.</p>
+
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-bottom:2rem">
+    <div style="background:rgba(77,184,78,.07);border:1px solid rgba(77,184,78,.25);border-radius:12px;padding:1.2rem">
+      <div style="font-size:1.5rem;margin-bottom:.5rem">⛰</div>
+      <div style="font-size:.85rem;font-weight:600;color:var(--green);margin-bottom:.4rem">Auf der Alm</div>
+      <div style="font-size:.78rem;color:var(--text2)">Alle aktuell oben. Buttons: ↓ vorzeitig abtreiben, ↓ normal abtreiben.</div>
+    </div>
+    <div style="background:rgba(212,132,75,.07);border:1px solid rgba(212,132,75,.25);border-radius:12px;padding:1.2rem">
+      <div style="font-size:1.5rem;margin-bottom:.5rem">⚠</div>
+      <div style="font-size:.85rem;font-weight:600;color:var(--orange);margin-bottom:.4rem">Vorzeitig abgetrieben</div>
+      <div style="font-size:.78rem;color:var(--text2)">Mit Datum und Grund. Buttons: ↑ zurück auf Alm, ✓ abgerechnet.</div>
+    </div>
+    <div style="background:rgba(100,100,100,.07);border:1px solid rgba(100,100,100,.2);border-radius:12px;padding:1.2rem">
+      <div style="font-size:1.5rem;margin-bottom:.5rem">🏠</div>
+      <div style="font-size:.85rem;font-weight:600;color:var(--text3);margin-bottom:.4rem">Nicht aufgetrieben</div>
+      <div style="font-size:.78rem;color:var(--text2)">Noch unten. Button: ↑ aufgetrieben. Alle aufgetrieben (Massenaktions-Button).</div>
+    </div>
+  </div>
+
+  <div class="bf-features">
+    <div class="bf-feature">
+      <div class="bf-feature-icon">📅</div>
+      <div class="bf-feature-text"><strong>Saison starten / beenden</strong>Almname, Jahr und Auftriebsdatum festlegen. Beim Beenden wird automatisch ein Saisonarchiv erstellt mit Milch, Alpungstagen, Behandlungsanzahl.</div>
+    </div>
+    <div class="bf-feature">
+      <div class="bf-feature-icon">📈</div>
+      <div class="bf-feature-text"><strong>Saisonvergleich</strong>Aktuelle Saison vs. archivierte Vorjahre. Vergleich Milchleistung, Alpungstage, Küheanzahl. Manuell oder automatisch beim Abtrieb archiviert.</div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ════════════════════════════════════════════════
+     MILCH
+════════════════════════════════════════════════ -->
+<section class="section reveal" id="milch">
+  <div class="section-label">Milchleistung</div>
+  <h2 class="section-title">Milch – Erfassung & Auswertung</h2>
+  <p class="section-sub">Milch morgens und abends erfassen – pro Kuh oder als Gesamtmenge. Automatische Auswertung mit Durchschnitt, Monatsübersicht und Molkerei-Export.</p>
+
+  <div class="module-grid">
+    <div class="module-card" style="--accent:#4ab8e8">
+      <span class="module-icon">🥛</span>
+      <div class="module-name">Pro-Kuh Erfassung</div>
+      <div class="module-desc">Standard-Modus. Jede Kuh einzeln mit +/− Buttons. Letzter Eintrag als Hint angezeigt. Grün-Highlight nach Eingabe. Live-Summe unten.</div>
+      <div class="module-features">
+        <div class="feature-item">Bauer-Filter Chips für übersichtliche Eingabe</div>
+        <div class="feature-item">Komma als Dezimalzeichen (wird automatisch konvertiert)</div>
+        <div class="feature-item">Einträge antippen → Detail-Popup mit pro-Kuh Aufschlüsselung</div>
+        <div class="feature-item">Eintrag bearbeiten und löschen</div>
+      </div>
+    </div>
+    <div class="module-card" style="--accent:#4ab8e8">
+      <span class="module-icon">📊</span>
+      <div class="module-name">Auswertung</div>
+      <div class="module-desc">Statistik-Kacheln, Monatsübersicht, Milchkurve (SVG-Liniengraph letzte 30 Tage), Milch pro Kuh mit animiertem Balkendiagramm.</div>
+      <div class="module-features">
+        <div class="feature-item">Ø pro Melktag (letzte 14 Tage)</div>
+        <div class="feature-item">Monatsübersicht: Liter pro Monat</div>
+        <div class="feature-item">📤 Molkerei-Export (CSV)</div>
+        <div class="feature-item">Pro-Kuh Ranking in Statistik</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ════════════════════════════════════════════════
+     BEHANDLUNG
+════════════════════════════════════════════════ -->
+<section class="section reveal" id="behandlung">
+  <div class="section-label">Tiergesundheit</div>
+  <h2 class="section-title">Behandlung & Bestandsbuch</h2>
+  <p class="section-sub">Vollständige Behandlungsdokumentation nach §12 TAKG. Zwei Kategorien: Almpersonal (grüner Rand) und Tierarzt (blauer Rand). Wartezeiten werden automatisch berechnet.</p>
+
+  <div class="module-grid">
+    <div class="module-card" style="--accent:var(--green)">
+      <span class="module-icon">🌿</span>
+      <div class="module-name">Almpersonal-Behandlung</div>
+      <div class="module-desc">Behandlungen durch das Almpersonal. Foto der Behandlung aufnehmen, Diagnose, Medikament, Dosis, Wartezeiten.</div>
+      <div class="module-features">
+        <div class="feature-item">Foto aufnehmen (automatisch komprimiert)</div>
+        <div class="feature-item">WZ Milch + WZ Fleisch in Tagen und Enddatum</div>
+        <div class="feature-item">Folgetermin setzen → erscheint im Kalender</div>
+        <div class="feature-item">Aktiv / Archiviert klar getrennt</div>
+      </div>
+    </div>
+    <div class="module-card" style="--accent:var(--blue)">
+      <span class="module-icon">🩺</span>
+      <div class="module-name">Tierarzt-Behandlung</div>
+      <div class="module-desc">Behandlungen durch den Tierarzt. Zusätzlich: Foto des Tierarztzettels hochladbar. Tierarztname speicherbar.</div>
+      <div class="module-features">
+        <div class="feature-item">Foto Tierarztzettel (separat)</div>
+        <div class="feature-item">Abgabedatum Medikament</div>
+        <div class="feature-item">Automatische Wartezeit-Berechnung</div>
+        <div class="feature-item">WZ-Überschreitung → roter Alert auf Dashboard</div>
+      </div>
+    </div>
+    <div class="module-card" style="--accent:var(--gold)">
+      <span class="module-icon">📋</span>
+      <div class="module-name">Bestandsbuch</div>
+      <div class="module-desc">Gesetzliches Bestandsbuch gemäß §12 TAKG. Alle Behandlungen mit allen Pflichtangaben in einer Tabelle. Drucken als A4 Querformat PDF.</div>
+      <div class="module-features">
+        <div class="feature-item">Spalten: Datum, Tier, Ohrmarke, Diagnose, Medikament, Dosis</div>
+        <div class="feature-item">Abgabe bis, WZ Milch/Fleisch (Tage + Enddatum), Tierarzt</div>
+        <div class="feature-item">PDF-Export A4 Querformat</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ════════════════════════════════════════════════
+     BESAMUNG
+════════════════════════════════════════════════ -->
+<section class="section reveal" id="besamung">
+  <div class="section-label">Reproduktion</div>
+  <h2 class="section-title">Besamung & Kalbung</h2>
+  <p class="section-sub">Vollständige Zuchtdokumentation. Besamungen erfassen, Trächtigkeitsstatus verfolgen, Geburtstermine berechnen, Kalbungen dokumentieren.</p>
+
+  <div class="bf-features">
+    <div class="bf-feature">
+      <div class="bf-feature-icon">💉</div>
+      <div class="bf-feature-text"><strong>Besamung erfassen</strong>Besamungstechniker, Stier/Samenspender, Samen-Charge, Datum. Automatische Berechnung Geburtstermin (+9 Monate 10 Tage) und Trockenstelltermin (Geburt −8 Wochen).</div>
+    </div>
+    <div class="bf-feature">
+      <div class="bf-feature-icon">↻</div>
+      <div class="bf-feature-text"><strong>2. Versuch</strong>Button direkt im Kuh-Profil. Übernimmt automatisch Techniker und Stier vom letzten Versuch. Markiert die vorherige Besamung als „leer".</div>
+    </div>
+    <div class="bf-feature">
+      <div class="bf-feature-icon">🔁</div>
+      <div class="bf-feature-text"><strong>Brunst-Kontrolle</strong>Tag 19–23 nach Besamung automatischer Alert auf Dashboard und Push-Notification. Nur wenn Status noch nicht „tragend bestätigt".</div>
+    </div>
+    <div class="bf-feature">
+      <div class="bf-feature-icon">📋</div>
+      <div class="bf-feature-text"><strong>Besamungsschein</strong>Foto des Besamungsscheins direkt in der App hochladen und speichern. Automatisch komprimiert.</div>
+    </div>
+    <div class="bf-feature">
+      <div class="bf-feature-icon">🐄</div>
+      <div class="bf-feature-text"><strong>Kalbung dokumentieren</strong>Geburtsdatum, Geschlecht, Ohrmarke Kalb, Name, Geburtsgewicht, Verlauf (normal/Schwergeburt/Totgeburt), Notizen.</div>
+    </div>
+    <div class="bf-feature">
+      <div class="bf-feature-icon">🔔</div>
+      <div class="bf-feature-text"><strong>Push-Benachrichtigungen</strong>Automatische Erinnerung 3 Wochen nach Besamung (Trächtigkeitsprüfung-Erinnerung aktivierbar). Geburtstermin-Push 7 und 3 Tage vorher.</div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ════════════════════════════════════════════════
+     WEIDE & ZÄHLUNG
+════════════════════════════════════════════════ -->
+<section class="section reveal" id="weide">
+  <div class="section-label">Weidemanagement</div>
+  <h2 class="section-title">Weide, Zählung & Alpungstage</h2>
+
+  <div class="module-grid">
+    <div class="module-card" style="--accent:var(--green)">
+      <span class="module-icon">🌿</span>
+      <div class="module-name">Weidegang</div>
+      <div class="module-desc">Tägliche Erfassung welche Kühe auf welcher Weide waren. Weiden anlegen mit Namen und Farbe.</div>
+      <div class="module-features">
+        <div class="feature-item">Weiden anlegen, bearbeiten, löschen</div>
+        <div class="feature-item">Pro Tag: welche Kühe auf welcher Weide</div>
+        <div class="feature-item">Statistik: Tage pro Weide, Ø Tiere</div>
+        <div class="feature-item">Top-Kühe nach Weidetagen</div>
+      </div>
+    </div>
+    <div class="module-card" style="--accent:var(--gold)" id="zaehlung">
+      <span class="module-icon">✓</span>
+      <div class="module-name">Herdenzählung</div>
+      <div class="module-desc">Animierte Zählung mit SVG-Almwiese (Hirte jagt Kuh, 2.5s Animation). Audio-Feedback. Kühe per Nummer bestätigen.</div>
+      <div class="module-features">
+        <div class="feature-item">Gruppen-Filter für übersichtliche Zählung</div>
+        <div class="feature-item">Zählung per Kuhnummer-Eingabe oder Antippen</div>
+        <div class="feature-item">Vollständig-Anzeige mit animiertem Counter</div>
+        <div class="feature-item">Hirten-Chat direkt aus Zählung erreichbar</div>
+        <div class="feature-item">Verlauf der letzten Zählungen</div>
+      </div>
+    </div>
+    <div class="module-card" style="--accent:var(--teal)">
+      <span class="module-icon">📊</span>
+      <div class="module-name">Alpungstage / AMA</div>
+      <div class="module-desc">AMA-konforme Aufstellung der Alpungstage pro Tier. Kalenderansicht als Heatmap, Liste mit Auf-/Abtriebsdatum und Gesamttagen.</div>
+      <div class="module-features">
+        <div class="feature-item">Kalender-Heatmap pro Kuh</div>
+        <div class="feature-item">Liste: Auftrieb, Abtrieb, Gesamttage</div>
+        <div class="feature-item">📤 Export für AMA-Förderantrag</div>
+      </div>
+    </div>
+    <div class="module-card" style="--accent:var(--blue)">
+      <span class="module-icon">🔍</span>
+      <div class="module-name">Tägliche Kontrolle</div>
+      <div class="module-desc">Schnelle Stallrunde digital dokumentieren. Jede Kuh antippen → kontrolliert. Offene und erledigte Kühe klar getrennt.</div>
+      <div class="module-features">
+        <div class="feature-item">Liste aller Kühe zum Abhaken</div>
+        <div class="feature-item">Kontrolliert/nicht kontrolliert Status</div>
+        <div class="feature-item">Datum der Kontrolle gespeichert</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ════════════════════════════════════════════════
+     WEITERE MODULE
+════════════════════════════════════════════════ -->
+<section class="section reveal" id="weitere">
+  <div class="section-label">Weitere Module</div>
+  <h2 class="section-title">22+ Module für jeden Bedarf</h2>
+  <p class="section-sub">Von Kraftfutter bis Käseproduktion, von Wetter bis Chat – HerdenPro deckt alle Bereiche der modernen Almwirtschaft ab.</p>
+
+  <div class="module-grid">
+
+    <div class="module-card" style="--accent:#c080e8">
+      <span class="module-icon">📓</span>
+      <div class="module-name">Tagesjournal</div>
+      <div class="module-desc">Tägliche Aufzeichnungen mit Kategorien, Wetter, Anwesenheit und Vorkommnissen.</div>
+      <div class="module-features">
+        <div class="feature-item">6 Kategorien: Allgemein, Tierarzt, Wetter, Vorfall, Kontrolle, Wartung</div>
+        <div class="feature-item">Filter nach Kategorie</div>
+        <div class="feature-item">Wetter-Schnellauswahl per Emoji-Buttons</div>
+        <div class="feature-item">Anwesenheit wer auf der Alm war</div>
+      </div>
+    </div>
+
+    <div class="module-card" style="--accent:var(--gold)">
+      <span class="module-icon">📅</span>
+      <div class="module-name">Kalender</div>
+      <div class="module-desc">Automatische Termine aus Behandlungen, Besamungen und Trockenstellen. Plus manuelle eigene Termine.</div>
+      <div class="module-features">
+        <div class="feature-item">Automatisch: Folgetermine, Trockenstelltermine, Geburtstermine</div>
+        <div class="feature-item">Manuell: eigene Termine (AMA-Kontrolle, Tierarztbesuch etc.)</div>
+        <div class="feature-item">Überfällig / Nächste 60 Tage / Später</div>
+        <div class="feature-item">Farbkodiert nach Termintyp</div>
+      </div>
+    </div>
+
+    <div class="module-card" style="--accent:var(--orange)">
+      <span class="module-icon">🌾</span>
+      <div class="module-name">Kraftfutter</div>
+      <div class="module-desc">Kraftfuttergaben pro Kuh erfassen und verfolgen. Verbrauchsübersicht für die Saison.</div>
+      <div class="module-features">
+        <div class="feature-item">Gaben pro Kuh und Datum</div>
+        <div class="feature-item">Sortenauswahl</div>
+        <div class="feature-item">Saison-Verbrauchsübersicht</div>
+      </div>
+    </div>
+
+    <div class="module-card" style="--accent:var(--blue)">
+      <span class="module-icon">⛅</span>
+      <div class="module-name">Wetter</div>
+      <div class="module-desc">7-Tage Wetterprognose via Open-Meteo API (kostenlos). Automatische Wetterwarnungen als Push-Notification.</div>
+      <div class="module-features">
+        <div class="feature-item">15 Tiroler/Vorarlberger/Kärntner Orte wählbar</div>
+        <div class="feature-item">7-Tage Prognose mit Temperatur, Wind, Regen</div>
+        <div class="feature-item">Auto-Refresh alle 30 Minuten</div>
+        <div class="feature-item">Wetter auf Dashboard als Schnellübersicht</div>
+      </div>
+    </div>
+
+    <div class="module-card" style="--accent:var(--gold2)">
+      <span class="module-icon">🧀</span>
+      <div class="module-name">Käseproduktion</div>
+      <div class="module-desc">Gantt-Diagramm Planer für Käseproduktion. Sorten anlegen, Produktionsschritte planen, Überlappungen erkennen.</div>
+      <div class="module-features">
+        <div class="feature-item">Gantt-Diagramm mit Drag & Drop</div>
+        <div class="feature-item">Startzeit +/− 30 Min Buttons</div>
+        <div class="feature-item">Überlappungserkennung (rote Pulsanimation)</div>
+        <div class="feature-item">Sorten ein-/ausblenden, PNG-Export</div>
+      </div>
+    </div>
+
+    <div class="module-card" style="--accent:var(--teal)">
+      <span class="module-icon">💬</span>
+      <div class="module-name">Hirten-Chat</div>
+      <div class="module-desc">Echtzeit-Chat für das Alm-Team via Firebase. Badge-Anzeige auf dem Mehr-Button wenn neue Nachrichten.</div>
+      <div class="module-features">
+        <div class="feature-item">Echtzeit via Firebase Realtime Database</div>
+        <div class="feature-item">Badge-Anzeige auch wenn Chat im Mehr-Menü</div>
+        <div class="feature-item">Chat direkt aus Zählung erreichbar</div>
+        <div class="feature-item">Name wählbar pro Gerät</div>
+      </div>
+    </div>
+
+    <div class="module-card" style="--accent:#4db84e">
+      <span class="module-icon">🔎</span>
+      <div class="module-name">Universalsuche</div>
+      <div class="module-desc">Durchsucht alle Datentypen gleichzeitig mit intelligentem Scoring-System.</div>
+      <div class="module-features">
+        <div class="feature-item">Sucht: Kühe, Bauern, Behandlungen, Besamungen, Milch, Kontakte, Journal</div>
+        <div class="feature-item">Scoring: exakt=10, beginnt=6, enthält=3</div>
+        <div class="feature-item">Suchbegriff gelb hervorgehoben</div>
+        <div class="feature-item">Bauer oben + seine Kühe direkt darunter</div>
+      </div>
+    </div>
+
+    <div class="module-card" style="--accent:var(--blue)">
+      <span class="module-icon">📞</span>
+      <div class="module-name">Kontakte</div>
+      <div class="module-desc">Kontaktliste für alle wichtigen Personen der Alm. Kategorisiert, mit Anruf-Link.</div>
+      <div class="module-features">
+        <div class="feature-item">Kategorien: Tierarzt, Bauer, Molkerei, Behörde, Sonstiges</div>
+        <div class="feature-item">Direkt-Anruf per tel:-Link</div>
+        <div class="feature-item">Notizfeld pro Kontakt</div>
+      </div>
+    </div>
+
+    <div class="module-card" style="--accent:var(--gold)">
+      <span class="module-icon">💾</span>
+      <div class="module-name">Backup & Export</div>
+      <div class="module-desc">Vollständiges Datensicherungs-System mit Firebase-Sync und Excel-Import/Export.</div>
+      <div class="module-features">
+        <div class="feature-item">JSON-Export aller Daten (vollständiges Backup)</div>
+        <div class="feature-item">Import aus HerdenPro Excel (Bauern + Kühe)</div>
+        <div class="feature-item">Molkerei-Milch-Export (CSV)</div>
+        <div class="feature-item">Daten bereinigen (verwaiste Einträge löschen)</div>
+      </div>
+    </div>
+
+    <div class="module-card" style="--accent:#4ab8e8">
+      <span class="module-icon">💧</span>
+      <div class="module-name">Tränke & Wasser</div>
+      <div class="module-desc">Tägliches Protokoll der Wasserversorgungskontrolle. Dreistufiger Status, Verlauf und Dashboard-Hinweis.</div>
+      <div class="module-features">
+        <div class="feature-item">Status: ✓ OK / ⚠ Mangel / 🔴 Problem</div>
+        <div class="feature-item">Notizfeld (Brunnen niedrig, Leckage, etc.)</div>
+        <div class="feature-item">Dashboard-Alert wenn heute noch nicht kontrolliert</div>
+        <div class="feature-item">Verlauf der letzten 30 Tage</div>
+      </div>
+    </div>
+
+    <div class="module-card" style="--accent:var(--orange)">
+      <span class="module-icon">📈</span>
+      <div class="module-name">Saisonvergleich</div>
+      <div class="module-desc">Vergleich der aktuellen Saison mit Vorjahren. Archivierung beim Saisonende automatisch oder manuell.</div>
+      <div class="module-features">
+        <div class="feature-item">Milch gesamt, Ø/Tag, Alpungstage, Küheanzahl</div>
+        <div class="feature-item">Behandlungs- und Besamungsanzahl</div>
+        <div class="feature-item">%-Vergleich zu Vorjahr (grün/rot)</div>
+        <div class="feature-item">Saisonnotiz (Trockenheit, Seuche, etc.)</div>
+      </div>
+    </div>
+
+    <div class="module-card" style="--accent:#d44b4b">
+      <span class="module-icon">🖨</span>
+      <div class="module-name">Drucken</div>
+      <div class="module-desc">Direktdruck der Herdenliste und des Bestandsbuches. PDF via Edge/Chrome Headless.</div>
+      <div class="module-features">
+        <div class="feature-item">Herdenliste als A4</div>
+        <div class="feature-item">Bestandsbuch A4 Querformat (§12 TAKG konform)</div>
+        <div class="feature-item">QR-Code pro Kuh druckbar</div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ════════════════════════════════════════════════
+     ROLLEN
+════════════════════════════════════════════════ -->
+<section class="section reveal" id="rollen">
+  <div class="section-label">Benutzerverwaltung</div>
+  <h2 class="section-title">4 Rollen – Klare Zugriffsrechte</h2>
+  <p class="section-sub">Jedes Teammitglied bekommt nur Zugriff auf das was es braucht. Admin verwaltet Benutzer und kann alle Module sehen. Neue Benutzer anlegen mit Modul-Checkboxen.</p>
+
+  <div class="role-grid">
+    <div class="role-card" style="border-color:rgba(212,168,75,.25)">
+      <div class="role-name" style="color:var(--gold)">👑 Admin</div>
+      <div class="role-item">Alle Module</div>
+      <div class="role-item">Benutzerverwaltung</div>
+      <div class="role-item">Rollen ändern</div>
+      <div class="role-item">Daten löschen</div>
+      <div class="role-item">Alle Einstellungen</div>
+    </div>
+    <div class="role-card" style="border-color:rgba(77,184,78,.2)">
+      <div class="role-name" style="color:var(--green)">🐄 Hirte</div>
+      <div class="role-item">Herde & Kuh-Detail</div>
+      <div class="role-item">Zählung</div>
+      <div class="role-item">Milch erfassen</div>
+      <div class="role-item">Behandlung</div>
+      <div class="role-item">Besamung</div>
+      <div class="role-item">Weide, Journal, Chat</div>
+    </div>
+    <div class="role-card" style="border-color:rgba(74,184,232,.2)">
+      <div class="role-name" style="color:#4ab8e8">🥛 Milchmesser</div>
+      <div class="role-item">Nur Milch eintragen</div>
+      <div class="role-item">Kein Zugriff auf Herde</div>
+      <div class="role-item">Keine Behandlung</div>
+    </div>
+    <div class="role-card" style="border-color:rgba(160,75,200,.2)">
+      <div class="role-name" style="color:#a04bc8">🏭 Molkerei</div>
+      <div class="role-item">Milchdaten lesen</div>
+      <div class="role-item">Nur Lesezugriff</div>
+      <div class="role-item">Export-Funktion</div>
+    </div>
+  </div>
+
+  <div style="margin-top:1.5rem;background:var(--bg2);border:1px solid rgba(255,255,255,.06);border-radius:12px;padding:1.2rem">
+    <div style="font-size:.78rem;font-weight:600;margin-bottom:.6rem;color:var(--text2)">🔐 Firebase Authentication</div>
+    <div style="display:flex;flex-wrap:wrap;gap:.5rem">
+      <span class="tag tag-green">Email/Passwort Login</span>
+      <span class="tag tag-blue">Firebase EU-Server</span>
+      <span class="tag tag-gold">DSGVO-konform</span>
+      <span class="tag tag-orange">Daten verschlüsselt</span>
+      <span class="tag tag-blue">Benutzer-aktivierung durch Admin</span>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ════════════════════════════════════════════════
+     PWA / TECH
+════════════════════════════════════════════════ -->
+<section class="section reveal" id="pwa">
+  <div class="section-label">Technologie</div>
+  <h2 class="section-title">PWA – Wie eine native App</h2>
+  <p class="section-sub">HerdenPro ist eine Progressive Web App. Kein App-Store nötig – einfach zum Homescreen hinzufügen. Funktioniert auch ohne Internetverbindung.</p>
+
+  <div class="pwa-box reveal">
+    <div>
+      <div class="pwa-item-icon">📴</div>
+      <div class="pwa-item-title">Offline-fähig</div>
+      <div class="pwa-item-text">Service Worker cached die App. Alle Eingaben werden lokal gespeichert und beim nächsten Online-Moment mit Firebase synchronisiert. Oranger Banner zeigt Offline-Modus an.</div>
+    </div>
+    <div>
+      <div class="pwa-item-icon">🔔</div>
+      <div class="pwa-item-title">Push-Notifications</div>
+      <div class="pwa-item-text">Automatische Benachrichtigungen: 07:00 Uhr Wartezeiten heute, 20:00 Uhr Wartezeiten morgen, Brunst Tag 19, Geburten 3 + 7 Tage vorher.</div>
+    </div>
+    <div>
+      <div class="pwa-item-icon">📱</div>
+      <div class="pwa-item-title">Homescreen Installation</div>
+      <div class="pwa-item-text">iOS: Safari → Teilen → Zum Home-Bildschirm. Android: Chrome → Installieren. Startet dann wie eine native App ohne Browser-Leiste.</div>
+    </div>
+    <div>
+      <div class="pwa-item-icon">🔄</div>
+      <div class="pwa-item-title">Echtzeit-Sync</div>
+      <div class="pwa-item-text">Firebase Realtime Database. Alle Geräte sehen Änderungen sofort. Mehrere Nutzer können gleichzeitig arbeiten – Hirte auf der Alm, Bauer im Tal.</div>
+    </div>
+    <div>
+      <div class="pwa-item-icon">⚙</div>
+      <div class="pwa-item-title">Nav anpassen</div>
+      <div class="pwa-item-text">Die untere Navigation ist vollständig anpassbar. Per ⚙ Anpassen oder Drag & Drop festlegen welche 4 Module in der Hauptleiste sind. Alles andere im Mehr-Menü.</div>
+    </div>
+    <div>
+      <div class="pwa-item-icon">🌐</div>
+      <div class="pwa-item-title">Tech-Stack</div>
+      <div class="pwa-item-text">Single HTML-File PWA. Firebase Compat SDK v9. Open-Meteo Wetter-API (kostenlos). SheetJS für Excel-Import. Vanilla JS – kein Framework, schnell und schlank.</div>
+    </div>
+  </div>
+
+  <!-- FAB Info -->
+  <div style="margin-top:2rem;background:var(--bg2);border:1px solid rgba(212,168,75,.15);border-radius:16px;padding:1.5rem">
+    <div style="font-size:.9rem;font-weight:600;margin-bottom:1rem;color:var(--gold)">➕ FAB Button – Schnellzugriff</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:.6rem">
+      <div class="bf-feature" style="margin:0">
+        <div class="bf-feature-icon">🥛</div>
+        <div class="bf-feature-text"><strong>Milch erfassen</strong>Sofort Milch-Formular öffnen</div>
+      </div>
+      <div class="bf-feature" style="margin:0">
+        <div class="bf-feature-icon">⚕</div>
+        <div class="bf-feature-text"><strong>Behandlung</strong>Neue Behandlung anlegen</div>
+      </div>
+      <div class="bf-feature" style="margin:0">
+        <div class="bf-feature-icon">✓</div>
+        <div class="bf-feature-text"><strong>Zählung</strong>Herdenzählung starten</div>
+      </div>
+      <div class="bf-feature" style="margin:0">
+        <div class="bf-feature-icon">📓</div>
+        <div class="bf-feature-text"><strong>Journal</strong>Tageseintrag erfassen</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ════════════════════════════════════════════════
+     EXCEL INTEGRATION
+════════════════════════════════════════════════ -->
+<section class="section reveal">
+  <div class="section-label">Schnittstellen</div>
+  <h2 class="section-title">Excel-Integration</h2>
+  <p class="section-sub">Nahtlose Verbindung zwischen HerdenPro App und dem bewährten Excel-Workflow. Daten einmal eintragen, überall verfügbar.</p>
+
+  <div class="module-grid" style="grid-template-columns:repeat(auto-fill,minmax(260px,1fr))">
+    <div class="module-card" style="--accent:var(--green)">
+      <span class="module-icon">📊</span>
+      <div class="module-name">HerdenPro_Rohdaten.xlsx</div>
+      <div class="module-desc">Excel-Datei für initiale Dateneingabe. Bauern und Kühe eintragen, dann in App importieren.</div>
+      <div class="module-features">
+        <div class="feature-item">Spalten: Kuhnr, Name, Bauer, Ohrmarke, Rasse, Gruppe, Bio, Laktation, Notizen</div>
+        <div class="feature-item">Hinweiszeilen und (auto) Zeilen werden übersprungen</div>
+        <div class="feature-item">Gruppen werden beim Import automatisch angelegt</div>
+      </div>
+    </div>
+    <div class="module-card" style="--accent:var(--blue)">
+      <span class="module-icon">⚡</span>
+      <div class="module-name">VBA Makro AktualisierKuehe()</div>
+      <div class="module-desc">Automatisches Befüllen des Kühe-Sheets aus dem Bauern-Sheet. Ein Klick – alle Kühe aktualisiert.</div>
+      <div class="module-features">
+        <div class="feature-item">Liest Bauern-Sheet automatisch</div>
+        <div class="feature-item">Befüllt Kühe-Sheet mit allen Feldern</div>
+        <div class="feature-item">Mehrfach ausführbar ohne Duplikate</div>
+      </div>
+    </div>
+    <div class="module-card" style="--accent:var(--gold)">
+      <span class="module-icon">🔄</span>
+      <div class="module-name">JSON Export/Import</div>
+      <div class="module-desc">Vollständige Datensicherung als JSON. Alle Daten exportieren, reimportieren, auf anderen Geräten einspielen.</div>
+      <div class="module-features">
+        <div class="feature-item">Alle Collections in einer Datei</div>
+        <div class="feature-item">Kompatibel mit Sennerei-Verwaltungssystem</div>
+        <div class="feature-item">Zeitstempel-basierte Versionierung</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════
+     FOOTER
+════════════════════════════════════════════════ -->
+<footer>
+  <div style="margin-bottom:.5rem"><strong>HerdenPro</strong></div>
+  <div>Almwirtschaft · Herdenverwaltung · Engineering by LN Machinery</div>
+  <div style="margin-top:.5rem">
+    <span class="tag tag-green" style="margin:.2rem">Firebase Realtime DB · EU-West</span>
+    <span class="tag tag-blue" style="margin:.2rem">DSGVO-konform</span>
+    <span class="tag tag-gold" style="margin:.2rem">v25.8</span>
+  </div>
+  <div style="margin-top:1rem;font-size:.72rem">
+    <a href="https://sepplkbg.github.io/herdenpro" style="color:var(--gold);text-decoration:none">🌐 sepplkbg.github.io/herdenpro</a>
+  </div>
+</footer>
+
+<script>
+// Scroll reveal
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if(e.isIntersecting) {
+      e.target.classList.add('visible');
+    }
+  });
+}, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+// Active toc link
+const sections = document.querySelectorAll('section[id], .section[id]');
+const tocLinks = document.querySelectorAll('.toc-link');
+
+window.addEventListener('scroll', () => {
+  let current = '';
+  sections.forEach(section => {
+    const top = section.getBoundingClientRect().top;
+    if(top < 200) current = section.getAttribute('id');
+  });
+  tocLinks.forEach(link => {
+    link.style.color = link.getAttribute('href') === '#'+current ? '#d4a84b' : '';
+  });
+}, {passive: true});
+</script>
+</body>
+</html>
