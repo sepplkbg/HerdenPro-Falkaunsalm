@@ -2688,14 +2688,16 @@ function renderMilch() {
                 // ── Wartezeit-Check für Milch ──
                 const heute = Date.now();
                 const wocheZurueck = heute - 7 * 86400000;
+                // Trockenstell-Behandlungen NICHT als WZ zählen (Laktation-Ende, keine „Verwerfen"-Regel)
+                const _istTs = (b) => window.hpIstTrockenstellBehandlung && window.hpIstTrockenstellBehandlung(b);
                 const aktiveWzBeh = Object.values(behandlungen||{}).find(b =>
                   b && b.aktiv !== false && b.kuhId === id &&
-                  b.wzMilchEnde && b.wzMilchEnde > heute
+                  b.wzMilchEnde && b.wzMilchEnde > heute && !_istTs(b)
                 );
                 // Auch: WZ war irgendwann in den letzten 7 Tagen aktiv (vergangene WZ diese Woche)
                 const vergangeneWzBeh = !aktiveWzBeh ? Object.values(behandlungen||{}).find(b =>
                   b && b.kuhId === id &&
-                  b.wzMilchEnde && b.wzMilchEnde <= heute && b.wzMilchEnde >= wocheZurueck
+                  b.wzMilchEnde && b.wzMilchEnde <= heute && b.wzMilchEnde >= wocheZurueck && !_istTs(b)
                 ) : null;
                 // ── Milchsperre-Check (aus milchSperren) ──
                 // Nur relevant wenn KEINE aktive Behandlungs-WZ (die versteckt den Button)
