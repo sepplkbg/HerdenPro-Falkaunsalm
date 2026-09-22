@@ -29,11 +29,11 @@
 ═══════════════════════════════════════════════════════════════════════════ -->
 <script>
 // Force clear cache if version changed
-if(localStorage.getItem('hp_version') !== 'v54.13') {
+if(localStorage.getItem('hp_version') !== 'v54.14') {
   localStorage.removeItem('mainNav');
   localStorage.removeItem('mehrOrder');
   localStorage.removeItem('mehrOrder');
-  localStorage.setItem('hp_version','v54.13');
+  localStorage.setItem('hp_version','v54.14');
   // Force SW update
   if('serviceWorker' in navigator) {
     navigator.serviceWorker.getRegistrations().then(function(regs) {
@@ -349,6 +349,11 @@ window.FIREBASE_CONFIG = (function() {
   .calendar-day span, .calendar-cell span {
     word-break: break-word; overflow-wrap: anywhere;
     display: inline-block; max-width: 100%;
+  }
+  /* 5) Header-Buttons Touch-Target 44x44 */
+  #global-suche-btn, #schrift-quick-btn {
+    min-width: 44px !important; min-height: 44px !important;
+    padding: 0.4rem 0.6rem !important;
   }
 </style>
 
