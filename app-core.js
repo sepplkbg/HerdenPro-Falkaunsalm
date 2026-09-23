@@ -325,6 +325,14 @@ window.computeCarryForwardGesamt = function(kueheIdsFilter) {
 
   // Wenn Saison offiziell abgeschlossen: nur bis Saisonende-Datum rechnen
   const saisonEndeTs = (window.saisonInfo && window.saisonInfo.saisonEndeDatum) || null;
+
+  // Rückwirkungs-Schutz für den Phantom-Milch-Stopp (v54.22):
+  // Saisons, die VOR Einführung des Fixes abgeschlossen wurden, behalten die alte Rechnung
+  // (Abrechnung mit den Bauern evtl. schon erfolgt). Admin kann es bewusst einschalten:
+  //   saison/phantomFixRueckwirkend = true
+  const _PHANTOM_FIX_AB = new Date('2026-09-23T00:00:00').getTime();
+  const _stoppAktiv = !saisonEndeTs || saisonEndeTs >= _PHANTOM_FIX_AB ||
+                      (window.saisonInfo && window.saisonInfo.phantomFixRueckwirkend === true);
   const heute = new Date(); heute.setHours(23,59,59,999);
   const heuteTs = saisonEndeTs && saisonEndeTs < heute.getTime() ? saisonEndeTs : heute.getTime();
   let sumMorgen = 0, sumAbend = 0;
@@ -415,7 +423,7 @@ window.computeCarryForwardGesamt = function(kueheIdsFilter) {
     }
     const _normMelk = (ts, zeit) => { const d = new Date(ts); d.setHours(0,0,0,0); return d.getTime() + (zeit === 'abend' ? 18 : 6) * 3600000; };
     let _letzteMessung = -Infinity;
-    const _istBeendet = melkTs => _stopps.length > 0 && _stopps.some(s => s <= melkTs && s > _letzteMessung);
+    const _istBeendet = melkTs => _stoppAktiv && _stopps.length > 0 && _stopps.some(s => s <= melkTs && s > _letzteMessung);
 
     const iter = new Date(firstKuhTs); iter.setHours(0,0,0,0);
     let mIdx = 0, aIdx = 0;

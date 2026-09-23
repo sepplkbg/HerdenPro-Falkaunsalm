@@ -32,10 +32,10 @@
 // v54.22: (1) nur EIGENEN Service Worker + EIGENE Caches löschen (beide Almen liegen auf
 // derselben Domain — vorher wurde die andere Alm offline-unfähig), (2) erst NACH dem
 // Löschen neu laden (vorher Race → Update griff erst beim übernächsten Start).
-if(localStorage.getItem('hp_version') !== 'v54.22') {
+if(localStorage.getItem('hp_version') !== 'v54.23') {
   localStorage.removeItem('mainNav');
   localStorage.removeItem('mehrOrder');
-  localStorage.setItem('hp_version','v54.22');
+  localStorage.setItem('hp_version','v54.23');
   var _hpAppId = location.pathname.replace(/[^\/]*$/, '').replace(/\W+/g, '_');
   var _hpDone = [];
   if('serviceWorker' in navigator) {
