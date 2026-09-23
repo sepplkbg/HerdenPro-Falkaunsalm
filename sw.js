@@ -1,4 +1,4 @@
-const CACHE = 'herdenpro-v320';
+const CACHE = 'herdenpro-v321';
 
 // Relative Pfade → funktioniert unter /herdenpro/ UND /HerdenPro-Falkaunsalm/
 const SHELL_FILES = [
@@ -7,6 +7,7 @@ const SHELL_FILES = [
   'manifest.json',
   'icon.svg',
   'styles.css',
+  'app-security.js',
   'app-core.js',
   'app-icons.js',
   'app-auth-refresh.js',
