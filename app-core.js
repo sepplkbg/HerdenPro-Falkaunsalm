@@ -290,13 +290,36 @@ window.hpIstTrockenstellBehandlung = function(b) {
 // Returns: { gesamt, morgen, abend, tage, molkerei, sennerei, verworfen } — gerundete Zahlen
 // molkerei/sennerei: nur bei Aufruf OHNE Kuh-Filter berechnet (aggregiert per Termin).
 // verworfen: Milch aus WZ/Milchsperre-Tagen (nicht verwertbar), regel "neue Messung gilt"
+// ── Saison-Zeitraum (v54.19) ────────────────────────────────────────────────
+// Milchdaten alter Saisons bleiben in der DB (Historie/Backup), dürfen aber NICHT
+// in Summen/Hochrechnungen der aktuellen Saison einfließen. Sonst: letzte Werte
+// vom Herbst werden über den Winter fortgeschrieben (E2E-Test: 9 Messungen 2026
+// → 16.516 L Phantom-Milch am 1.7.2027).
+// Untergrenze = Auftrieb − 30 Tage Toleranz (falls vor dem eingetragenen Auftrieb
+// schon gemessen wurde). Ohne Auftriebsdatum: kein Filter (altes Verhalten).
+window.hpSaisonVonTs = function() {
+  const a = window.saisonInfo && window.saisonInfo.auftriebDatum;
+  if(!a) return -Infinity;
+  const d = new Date(a); d.setHours(0,0,0,0);
+  return d.getTime() - 30 * 86400000;
+};
+window.hpImSaisonZeitraum = function(ts) { return ts != null && ts >= window.hpSaisonVonTs(); };
+window.hpMilchDerSaison = function() {
+  const von = window.hpSaisonVonTs();
+  const alle = window.milchEintraege || {};
+  if(von === -Infinity) return alle;
+  const out = {};
+  for(const k in alle) { const e = alle[k]; if(e && e.datum >= von) out[k] = e; }
+  return out;
+};
+
 window.computeCarryForwardGesamt = function(kueheIdsFilter) {
   const _mW = window.milchWert || function(v){ return typeof v === 'number' ? v : (v && v.wert != null ? parseFloat(v.wert) || 0 : parseFloat(v) || 0); };
   const kuehe = window.kuehe || {};
   const ids = kueheIdsFilter
     ? (kueheIdsFilter instanceof Set ? [...kueheIdsFilter] : [...kueheIdsFilter])
     : Object.keys(kuehe);
-  const eintraege = Object.values(window.milchEintraege || {})
+  const eintraege = Object.values(window.hpMilchDerSaison ? window.hpMilchDerSaison() : (window.milchEintraege || {}))
     .filter(e => e && e.datum && e.prokuh);
   if(!ids.length || !eintraege.length) return { gesamt: 0, morgen: 0, abend: 0, tage: 0, molkerei: 0, sennerei: 0, verworfen: 0 };
 
