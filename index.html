@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta name="theme-color" content="#0c1a09"/>
+<meta name="color-scheme" content="dark"/>
+<meta name="mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<meta name="apple-mobile-web-app-title" content="HerdenPro"/>
+<meta name="application-name" content="HerdenPro"/>
+<meta name="description" content="Digitale Herdenverwaltung für Almwirtschaft — Milchmessung, Behandlungen, Sennerei"/>
+<!-- Favicon + Icons (SVG scales an alle Größen) -->
+<link rel="icon" type="image/svg+xml" href="icon.svg"/>
+<link rel="mask-icon" href="icon.svg" color="#0c1a09"/>
+<link rel="apple-touch-icon" href="icon.svg"/>
+<link rel="apple-touch-icon" sizes="180x180" href="icon.svg"/>
+<link rel="apple-touch-icon" sizes="152x152" href="icon.svg"/>
+<link rel="apple-touch-icon" sizes="167x167" href="icon.svg"/>
+<title>HerdenPro v25</title>
+<link rel="manifest" href="manifest.json"/>
+
+<!-- ══════════════════════════════════════════════════════════════════════════
+     🔧 FIREBASE-KONFIGURATION – hier deine Werte eintragen
+     (Firebase Console → Projekteinstellungen → Web-App → Config)
+═══════════════════════════════════════════════════════════════════════════ -->
+<script>
+// Force clear cache if version changed
+if(localStorage.getItem('hp_version') !== 'v54.18') {
+  localStorage.removeItem('mainNav');
+  localStorage.removeItem('mehrOrder');
+  localStorage.removeItem('mehrOrder');
+  localStorage.setItem('hp_version','v54.18');
+  // Force SW update
+  if('serviceWorker' in navigator) {
+    navigator.serviceWorker.getRegistrations().then(function(regs) {
+      regs.forEach(function(reg) {
+        reg.update();
+        reg.unregister();
+      });
+    });
+    // Clear all caches
+    if(window.caches) {
+      caches.keys().then(function(keys) {
+        keys.forEach(function(k) { caches.delete(k); });
+      });
+    }
+    // Reload once after clearing
+    if(!sessionStorage.getItem('reloaded_v54_9')) {
+      sessionStorage.setItem('reloaded_v54_9','1');
+      window.location.reload(true);
+    }
+  }
+}
+// Early doLogin – funktioniert auch wenn Hauptscript noch lädt
+window.toggleFab = function() {
+  var fab = document.getElementById('fab-menu');
+  if(fab) fab.style.display = fab.style.display==='none'?'flex':'none';
+};
+
+// Vollständige toggleMehrMenu - funktioniert auch vor renderNav
+window.toggleMehrMenu = function(e) {
+  if(e && e.stopPropagation) e.stopPropagation();
+  var m = document.getElementById('mehr-menu');
+  if(!m) return;
+  var isOpen = m.style.display === 'block';
+  m.style.display = isOpen ? 'none' : 'block';
+  if(!isOpen) {
+    // User-Header befüllen (Email + Rolle)
+    var uh = document.getElementById('mehr-user-header');
+    if(uh) {
+      var mail = (window._currentUser && window._currentUser.email) || '–';
+      var rolle = window._currentRole || 'hirte';
+      var rolleLabels = {admin:'Admin',hirte:'Hirte',molkerei:'Molkerei',milchmesser:'Milchmesser',sennerei:'Sennerei'};
+      uh.innerHTML =
+        '<div style="min-width:0;flex:1">' +
+          '<div style="font-size:.62rem;color:var(--text3);letter-spacing:.05em">ANGEMELDET ALS</div>' +
+          '<div style="font-size:.85rem;color:var(--text);font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' + mail + '</div>' +
+        '</div>' +
+        '<span class="role-badge role-' + rolle + '" style="font-size:.7rem;padding:.2rem .55rem;border-radius:8px;background:rgba(212,168,75,.15);border:1px solid var(--gold2);color:var(--gold)">' + (rolleLabels[rolle] || rolle) + '</span>';
+    }
+    var grid = document.getElementById('mehr-grid');
+    if(grid) {
+      var mainNav = window._mainNav || ['dashboard','herde','saison','milch'];
+      var allMods = (window.ALLE_MODULE && window.ALLE_MODULE.length > 4) ? window.ALLE_MODULE : [
+        {id:'zaehlung',icon:'✓',label:'Zählung'},{id:'weide',icon:'🌿',label:'Weide'},
+        {id:'behandlung',icon:'⚕',label:'Behandlung'},{id:'besamung',icon:'🐮',label:'Besamung'},
+        {id:'bestandsbuch',icon:'📋',label:'Bestandsbuch'},{id:'einstellungen',icon:'⚙',label:'Einstellungen'},
+        {id:'journal',icon:'📓',label:'Journal'},{id:'alpung',icon:'📊',label:'Alpungstage'},
+        {id:'kontakte',icon:'📞',label:'Kontakte'},{id:'gruppen',icon:'🏷',label:'Gruppen'},
+        {id:'kontrolle',icon:'🔍',label:'Kontrolle'},{id:'kalender',icon:'📅',label:'Kalender'},
+        {id:'statistik',icon:'📊',label:'Statistik'},{id:'backup',icon:'💾',label:'Backup'},
+        {id:'suche',icon:'🔎',label:'Suche'},{id:'chat',icon:'💬',label:'Chat'},
+        {id:'kraftfutter',icon:'🌾',label:'Kraftfutter'},{id:'wetter',icon:'⛅',label:'Wetter'},
+        {id:'kaese',icon:'🧀',label:'Käse'},{id:'sennerei',icon:'🥛',label:'Sennerei'},{id:'bauern_menu',icon:'👥',label:'Bauern'},
+        {id:'wartung',icon:'🔧',label:'Wartung'},{id:'lager',icon:'📦',label:'Lager'},
+        {id:'aufgaben',icon:'✅',label:'Aufgaben'},
+        {id:'milchqualitaet',icon:'🧪',label:'Milchqualität'},
+        {id:'darstellung',icon:'📐',label:'Darstellung'},
+        {id:'spiel',icon:'🎮',label:'Alm-Renner'},
+      ];
+      var imMenu = allMods.filter(function(mod){ return !mainNav.includes(mod.id) && mod.id !== '__drucken__'; });
+      grid.innerHTML = imMenu.map(function(mod){
+        return '<button class="mehr-btn" onclick="(window.navigate&&window.navigate(\''+mod.id+'\'));document.getElementById(\'mehr-menu\').style.display=\'none\'" style="width:100%"><span>'+mod.icon+'</span>'+mod.label+'</button>';
+      }).join('');
+    }
+  }
+};
+// Fallbacks für Funktionen die vor dem Hauptscript aufgerufen werden könnten
+['showMilchForm','showKuhForm','showBehandlungForm','showKlauenForm','showKraftfutterForm',
+ 'showAufgabeForm','showWartungMaschineForm','showLagerArtikelForm'].forEach(function(fn){
+  if(!window[fn]) window[fn] = function(){ setTimeout(function(){ if(window[fn+'_real'])window[fn+'_real'](); }, 500); };
+});
+window.doLogin = async function() {
+  try {
+    if(typeof firebase === 'undefined') {
+      var errEl = document.getElementById('login-error');
+      if(errEl){errEl.textContent='Firebase lädt noch, bitte kurz warten…';errEl.style.display='';}
+      return;
+    }
+    if(!firebase.apps.length) firebase.initializeApp(window.FIREBASE_CONFIG);
+    var email = document.getElementById('login-email')?.value.trim();
+    var pw = document.getElementById('login-pw')?.value;
+    if(!email||!pw){
+      var errEl=document.getElementById('login-error');
+      if(errEl){errEl.textContent='Bitte E-Mail und Passwort eingeben.';errEl.style.display='';}
+      return;
+    }
+    var btn = document.querySelector('#login-form button');
+    if(btn){btn.textContent='⏳ Anmelden…';btn.disabled=true;}
+    try {
+      // Hard-Timeout 20s — verhindert dass Button ewig lädt bei schwacher Verbindung
+      var signInP = firebase.auth().signInWithEmailAndPassword(email, pw);
+      var timeoutP = new Promise(function(_,rej){ setTimeout(function(){ rej(new Error('LOGIN_TIMEOUT')); }, 20000); });
+      await Promise.race([signInP, timeoutP]);
+      try {
+        var packed = btoa(unescape(encodeURIComponent(JSON.stringify({e: email, p: pw}))));
+        localStorage.setItem('hp_autoauth', packed);
+      } catch(x) { console.warn('Auto-Login speichern:', x); }
+      // onAuthStateChanged übernimmt den Rest
+    } catch(e) {
+      if(String(e.message||'').includes('LOGIN_TIMEOUT')) {
+        var errEl2=document.getElementById('login-error');
+        if(errEl2){errEl2.textContent='Timeout (20s) — Server antwortet nicht. Verbindung schwach? Nochmal versuchen.';errEl2.style.display='';}
+        if(btn){btn.textContent='Anmelden';btn.disabled=false;}
+        return;
+      }
+      var msgs = {
+        'auth/user-not-found':'E-Mail nicht gefunden.',
+        'auth/wrong-password':'Falsches Passwort.',
+        'auth/invalid-email':'Ungültige E-Mail.',
+        'auth/too-many-requests':'Zu viele Versuche. Bitte warte kurz.',
+        'auth/invalid-credential':'E-Mail oder Passwort falsch.'
+      };
+      var errEl=document.getElementById('login-error');
+      if(errEl){errEl.textContent=msgs[e.code]||'Fehler: '+e.message;errEl.style.display='';}
+    } finally {
+      if(btn){btn.textContent='Anmelden';btn.disabled=false;}
+    }
+  } catch(err) {
+    console.error('doLogin error:', err);
+  }
+};
+// ════════════════════════════════════════════════════════════════════════════
+// FIREBASE-CONFIG mit ENV-SWITCH (Prod / Test)
+// Umschaltung via localStorage.hp_env ('prod' | 'test')
+// Test-Config wird als JSON in localStorage.hp_test_config gespeichert
+// ════════════════════════════════════════════════════════════════════════════
+window.HP_PROD_CONFIG = {
+  apiKey:            "AIzaSyCfC8oD-ooaNJH0SxSWT9ZBTLL1bmUUB5Y",
+  authDomain:        "herdenpro-falkaunsalm.firebaseapp.com",
+  databaseURL:       "https://herdenpro-falkaunsalm-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId:         "herdenpro-falkaunsalm",
+  storageBucket:     "herdenpro-falkaunsalm.firebasestorage.app",
+  messagingSenderId: "1071087845056",
+  appId:             "1:1071087845056:web:1034be213ebded9ab4f725"
+};
+window.HP_ENV = (function() {
+  try {
+    const env = localStorage.getItem('hp_env');
+    if(env === 'test') {
+      const raw = localStorage.getItem('hp_test_config');
+      if(raw) {
+        const cfg = JSON.parse(raw);
+        if(cfg && cfg.apiKey && cfg.databaseURL) {
+          console.log('[Env] TEST-MODUS aktiv · Projekt:', cfg.projectId);
+          return 'test';
+        }
+      }
+      console.warn('[Env] Test-Modus angefordert aber keine gültige Test-Config. Nutze PROD.');
+    }
+  } catch(e) { console.warn('[Env] Fehler beim Env-Load:', e); }
+  return 'prod';
+})();
+window.FIREBASE_CONFIG = (function() {
+  if(window.HP_ENV === 'test') {
+    try { return JSON.parse(localStorage.getItem('hp_test_config')); } catch(e) {}
+  }
+  return window.HP_PROD_CONFIG;
+})();
+
+// ── PROJEKT-WECHSEL-ERKENNUNG ──
+// Beide HerdenPro-Apps liegen auf sepplkbg.github.io — teilen sich localStorage.
+// Wenn zuletzt ein anderes Firebase-Projekt geladen war (andere Alm) → alle
+// alten Cache- und Auth-Daten LÖSCHEN, damit die neue Alm sauber startet.
+(function() {
+  try {
+    const currentProjectId = (window.FIREBASE_CONFIG || {}).projectId;
+    if(!currentProjectId) return;
+    const storedProjectId = localStorage.getItem('hp_last_projectId');
+    if(storedProjectId && storedProjectId !== currentProjectId) {
+      console.warn('[Multi-App] Projekt-Wechsel erkannt: ' + storedProjectId + ' → ' + currentProjectId + ' · Cache & Auth werden zurückgesetzt');
+      // Alle Cache-, Auth- und User-Daten weg
+      const keys = Object.keys(localStorage);
+      keys.forEach(k => {
+        if(k.startsWith('firebase:') ||
+           k.startsWith('hp_autoauth') ||
+           k.startsWith('cache_') ||
+           k === 'lastAuthUid' ||
+           k === 'mainNav' ||
+           k === 'mehrOrder' ||
+           k === 'hp_version' ||
+           k.startsWith('milchWarn') ||
+           k.startsWith('milch_') ||
+           k.startsWith('cache_userProfile_')) {
+          localStorage.removeItem(k);
+        }
+      });
+      // Service Worker aufräumen damit auch die ausgelieferten Dateien passen
+      if('serviceWorker' in navigator) {
+        navigator.serviceWorker.getRegistrations().then(function(regs) {
+          regs.forEach(function(reg) { try { reg.unregister(); } catch(e){} });
+        }).catch(function(){});
+      }
+      if(window.caches) {
+        caches.keys().then(function(keys) {
+          keys.forEach(function(k) { try { caches.delete(k); } catch(e){} });
+        }).catch(function(){});
+      }
+      // Session-Marker damit die Reload-Schleife den Reset nicht dauernd wiederholt
+      sessionStorage.setItem('hp_projekt_reset', '1');
+      // Sanft neu laden — der Fetch holt frische Dateien
+      if(!sessionStorage.getItem('hp_projekt_reset_reloaded')) {
+        sessionStorage.setItem('hp_projekt_reset_reloaded','1');
+        setTimeout(function(){ location.reload(); }, 100);
+      }
+    }
+    localStorage.setItem('hp_last_projectId', currentProjectId);
+  } catch(e) { console.warn('[Multi-App] Projekt-Check-Fehler:', e); }
+})();
+  // ── ALLE_MODULE (muss vor renderNav verfügbar sein) ──
+  window.ALLE_MODULE = [
+    {id:'herde',    icon:'🐄',  label:'Herde'},
+    {id:'milch',    icon:'🥛',  label:'Milch'},
+    {id:'saison',    icon:'▲',   label:'Saison'},
+    {id:'zaehlung',  icon:'✓',   label:'Zählung'},
+    {id:'weide',     icon:'🌿',  label:'Weide'},
+    {id:'behandlung',icon:'⚕',   label:'Behandlung'},
+    {id:'besamung',  icon:'🐮',  label:'Besamung'},
+    {id:'bestandsbuch',icon:'📋',label:'Bestandsbuch'},
+    {id:'einstellungen',icon:'⚙',label:'Einstellungen'},
+    {id:'benutzer',    icon:'👤', label:'Benutzer'},
+    {id:'journal',   icon:'📓',  label:'Journal'},
+    {id:'alpung',    icon:'📊',  label:'Alpungstage'},
+    {id:'kontakte',  icon:'📞',  label:'Kontakte'},
+    {id:'gruppen',   icon:'🏷',  label:'Gruppen'},
+    {id:'kontrolle', icon:'🔍',  label:'Kontrolle'},
+    {id:'kalender',  icon:'📅',  label:'Kalender'},
+    {id:'statistik', icon:'📊',  label:'Statistik'},
+    {id:'backup',    icon:'💾',  label:'Backup'},
+    {id:'suche',     icon:'🔎',  label:'Suche'},
+    {id:'chat',       icon:'💬',  label:'Chat'},
+    {id:'kraftfutter',icon:'🌾',  label:'Kraftfutter'},
+    {id:'wetter',    icon:'⛅',  label:'Wetter'},
+    {id:'kaese',     icon:'🧀',  label:'Käse'},
+    {id:'sennerei',  icon:'🥛',  label:'Sennerei'},
+    {id:'bauern_menu',icon:'👥',  label:'Bauern'},
+    {id:'saisonvergleich',icon:'📈',label:'Saisonvergleich'},
+    {id:'traenke',   icon:'💧',  label:'Tränke'},
+    {id:'stallplan',  icon:'🏚',  label:'Stallplan'},
+    {id:'qrscanner',  icon:'📷',  label:'QR-Scanner'},
+    {id:'wartung',    icon:'🔧',  label:'Wartung'},
+    {id:'lager',      icon:'📦',  label:'Lager'},
+    {id:'aufgaben',   icon:'✅',  label:'Aufgaben'},
+    {id:'milchqualitaet',icon:'🧪',label:'Milchqualität'},
+    {id:'darstellung',icon:'📐',  label:'Darstellung'},
+    {id:'spiel',     icon:'🎮',  label:'Alm-Renner'},
+    {id:'__drucken__',icon:'🖨',  label:'Drucken'},
+  ];
+  window.DEFAULT_MAIN_NAV = ['dashboard','herde','saison','milch'];
+  window._mainNav = JSON.parse(localStorage.getItem('mainNav')||'null') || window.DEFAULT_MAIN_NAV.slice();
+  window._mehrAnpassen = false;
+  // localStorage already reset by version check above
+
+  // ── Stubs (werden vom Hauptscript überschrieben – NICHT hier überschreiben!) ──
+  window._navReady = false;
+  // toggleMehrMenu: nicht überschreiben – kommt vom Hauptscript
+  window.closeMehr = window.closeMehr || function() {
+    var m=document.getElementById('mehr-menu');
+    if(m) m.style.display='none';
+  };
+</script>
+
+<link rel="stylesheet" href="styles.css"/>
+<!-- Firebase Compat SDK -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-storage-compat.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script>if(typeof pdfjsLib !== 'undefined'){pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';}</script>
+<!-- ExcelJS für XLSX-Export mit Formatierung (rote Zellen, Kommentare) -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.4.0/exceljs.min.js"></script>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
+
+<!-- ICONIFY: 200.000+ SVG-Icons via Web-Component. Usage: <iconify-icon icon="lucide:cow"></iconify-icon> -->
+<script src="https://code.iconify.design/iconify-icon/2.1.0/iconify-icon.min.js"></script>
+<style>
+  iconify-icon {
+    display: inline-block;
+    vertical-align: -0.125em;
+    font-size: 1.2em;
+    line-height: 1;
+  }
+  .hp-icon-lg { font-size: 1.5em; }
+  .hp-icon-xl { font-size: 2em; }
+  .hp-icon-2xl { font-size: 2.5em; }
+
+  /* HP-FIX-STYLES (v54.13): UX-Verbesserungen basierend auf QA-Runde */
+  .stat-card { overflow: hidden; }
+  .stat-card .stat-num {
+    font-size: clamp(1rem, 6vw, 2rem) !important;
+    max-width: 100%; overflow: hidden; text-overflow: ellipsis;
+    white-space: nowrap; line-height: 1.15;
+  }
+  .list-card-title {
+    word-break: break-word; overflow-wrap: anywhere; hyphens: auto;
+  }
+  .milch-sync-action {
+    min-width: 44px !important; min-height: 44px !important;
+    display: inline-flex !important; align-items: center; justify-content: center;
+  }
+  .calendar-day span, .calendar-cell span {
+    word-break: break-word; overflow-wrap: anywhere;
+    display: inline-block; max-width: 100%;
+  }
+  /* 5) Header-Buttons Touch-Target 44x44 */
+  #global-suche-btn, #schrift-quick-btn {
+    min-width: 44px !important; min-height: 44px !important;
+    padding: 0.4rem 0.6rem !important;
+  }
+</style>
+
+<!-- KÄSE MODUL CSS -->
+
+</head>
+<body>
+
+<!-- LOGIN SCREEN -->
+<div id="login-screen">
+  <!-- Animierte Wiese im Hintergrund -->
+  <div class="login-meadow">
+    <div class="login-sky"></div>
+    <div class="login-mountains"></div>
+    <div class="login-grass"></div>
+    <!-- Kühe auf der Wiese (CSS-Animation: laufen, Kopf senken zum Grasen) -->
+    <div class="login-cow login-cow-1">🐄</div>
+    <div class="login-cow login-cow-2">🐮</div>
+    <div class="login-cow login-cow-3">🐄</div>
+    <div class="login-cow login-cow-4">🐮</div>
+    <!-- Grashalme die wehen -->
+    <div class="login-grasshalm" style="left:8%;animation-delay:0s">🌾</div>
+    <div class="login-grasshalm" style="left:22%;animation-delay:.7s">🌱</div>
+    <div class="login-grasshalm" style="left:38%;animation-delay:1.3s">🌾</div>
+    <div class="login-grasshalm" style="left:55%;animation-delay:.4s">🌱</div>
+    <div class="login-grasshalm" style="left:72%;animation-delay:1.1s">🌾</div>
+    <div class="login-grasshalm" style="left:88%;animation-delay:.9s">🌱</div>
+    <!-- Sonne -->
+    <div class="login-sun">☀️</div>
+  </div>
+
+  <!-- Login-Karte vorne mittig -->
+  <div class="login-card">
+    <div class="login-logo">🐄</div>
+    <h1 class="login-title">HerdenPro</h1>
+    <p class="login-subtitle">Almwirtschaft · Herdenverwaltung</p>
+    <div id="login-error" class="login-error" style="display:none"></div>
+    <div id="login-form">
+      <label class="login-label" for="login-email">E-Mail</label>
+      <input id="login-email" class="login-input" type="email" placeholder="dein@hof.at" inputmode="email" autocomplete="email" autocapitalize="none" />
+      <label class="login-label" for="login-pw">Passwort</label>
+      <input id="login-pw" class="login-input" type="password" placeholder="••••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()" />
+      <button onclick="doLogin()" class="login-btn">Anmelden</button>
+    </div>
+    <button onclick="showPwReset()" class="login-link">Passwort vergessen?</button>
+  </div>
+
+  <!-- Footer -->
+  <div class="login-footer">
+    <a href="./datenschutz.html" target="_blank">Datenschutzerklärung</a>
+    <span> · Daten verschlüsselt · EU-Server</span>
+    <div class="login-engineering">Engineering by LN Machinery</div>
+  </div>
+</div>
+
+<div id="root" style="display:none">
+  <!-- Install Banner (iOS Hinweis) -->
+  <div id="install-banner" class="hidden">
+    <span>📲 Zum Homescreen hinzufügen: Safari → Teilen → „Zum Home-Bildschirm"</span>
+    <button onclick="document.getElementById('install-banner').classList.add('hidden')"
+      style="background:none;border:none;color:var(--text3);font-size:1.1rem;cursor:pointer;flex-shrink:0">✕</button>
+  </div>
+
+  <!-- Offline Banner -->
+  <div id="offline-banner" style="display:none;background:var(--orange);color:#1a0a00;padding:.5rem 1rem;font-size:.8rem;align-items:center;gap:.5rem;flex-shrink:0;z-index:100">
+    <span>📡</span>
+    <span>Offline – Änderungen werden gespeichert sobald wieder online</span>
+  </div>
+  <div id="offline-sync-banner" style="display:none;background:rgba(200,120,0,.95);color:#fff;padding:.45rem 1rem;font-size:.78rem;text-align:center;z-index:100;flex-shrink:0">
+    ⚠ Wieder online – Daten werden synchronisiert. Bei mehreren Geräten bitte Einträge prüfen.
+  </div>
+
+  <!-- Milch v2: globaler Sync-Banner (immer sichtbar solange pending oder Konflikte) -->
+  <div id="milch-sync-banner" class="milch-sync-banner" style="display:none"></div>
+
+  <!-- Top Bar -->
+  <div id="topbar">
+    <div style="display:flex;flex-direction:column;line-height:1.1">
+      <span id="topbar-title">🐄 HerdenPro</span>
+      <span style="font-size:.48rem;color:var(--text3);letter-spacing:.06em;opacity:.8">Engineering by LN Machinery</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:.5rem">
+      <!-- GLOBALE SUCHE -->
+      <button id="global-suche-btn" onclick="hpSuche()"
+        title="Suche (Kuh, Bauer, Behandlung, ...)"
+        style="background:transparent;border:1.5px solid var(--border2);border-radius:8px;padding:.15rem .45rem;color:var(--text2);cursor:pointer;line-height:1;font-size:.95rem;display:inline-flex;align-items:center;justify-content:center;min-width:28px">🔍</button>
+      <!-- Schriftgröße-Schnellzugriff -->
+      <button id="schrift-quick-btn" onclick="toggleSchriftPopup()"
+        title="Schriftgröße anpassen"
+        style="background:transparent;border:1.5px solid var(--border2);border-radius:8px;padding:.15rem .45rem;color:var(--text2);font-family:Georgia,serif;font-weight:700;cursor:pointer;line-height:1;display:inline-flex;align-items:baseline;gap:1px">
+        <span style="font-size:.85em">A</span><span style="font-size:1.1em">A</span>
+      </button>
+      <div class="sync-indicator" id="sync-dot" title="Verbunden"></div>
+    </div>
+  </div>
+
+  <!-- Schriftgröße-Popup (overlay) -->
+  <div id="schrift-popup" style="display:none;position:fixed;top:calc(var(--topbar-h,56px) + 6px);right:.6rem;z-index:9999;background:var(--bg2);border:1px solid var(--gold2);border-radius:14px;padding:.6rem;box-shadow:0 8px 32px rgba(0,0,0,.6);min-width:14rem">
+    <div style="font-size:11px;color:var(--text3);text-align:center;margin-bottom:.4rem;letter-spacing:.05em;font-weight:700">SCHRIFTGRÖSSE</div>
+    <div style="display:flex;gap:.2rem;align-items:flex-end;justify-content:center;flex-wrap:wrap" id="schrift-buttons">
+      <button data-skala="0.50" onclick="setSchriftSkala('0.50')" style="padding:.35rem .35rem;background:var(--bg);border:2px solid var(--border);border-radius:7px;color:var(--text2);cursor:pointer;font-family:Georgia,serif;font-weight:700;font-size:9px">A</button>
+      <button data-skala="0.70" onclick="setSchriftSkala('0.70')" style="padding:.35rem .35rem;background:var(--bg);border:2px solid var(--border);border-radius:7px;color:var(--text2);cursor:pointer;font-family:Georgia,serif;font-weight:700;font-size:11px">A</button>
+      <button data-skala="0.85" onclick="setSchriftSkala('0.85')" style="padding:.35rem .35rem;background:var(--bg);border:2px solid var(--border);border-radius:7px;color:var(--text2);cursor:pointer;font-family:Georgia,serif;font-weight:700;font-size:14px">A</button>
+      <button data-skala="1.00" onclick="setSchriftSkala('1.00')" style="padding:.35rem .35rem;background:var(--bg);border:2px solid var(--border);border-radius:7px;color:var(--text2);cursor:pointer;font-family:Georgia,serif;font-weight:700;font-size:16px">A</button>
+      <button data-skala="1.30" onclick="setSchriftSkala('1.30')" style="padding:.35rem .35rem;background:var(--bg);border:2px solid var(--border);border-radius:7px;color:var(--text2);cursor:pointer;font-family:Georgia,serif;font-weight:700;font-size:19px">A</button>
+      <button data-skala="1.60" onclick="setSchriftSkala('1.60')" style="padding:.35rem .35rem;background:var(--bg);border:2px solid var(--border);border-radius:7px;color:var(--text2);cursor:pointer;font-family:Georgia,serif;font-weight:700;font-size:22px">A</button>
+      <button data-skala="2.00" onclick="setSchriftSkala('2.00')" style="padding:.35rem .35rem;background:var(--bg);border:2px solid var(--border);border-radius:7px;color:var(--text2);cursor:pointer;font-family:Georgia,serif;font-weight:700;font-size:25px">A</button>
+    </div>
+    <div style="display:flex;justify-content:space-between;font-size:9px;color:var(--text3);margin-top:.25rem;padding:0 .2rem">
+      <span>Sehr klein</span><span>Sehr groß</span>
+    </div>
+    <!-- App-Update / Cache-Reset (für alle Rollen erreichbar) -->
+    <div style="border-top:1px solid var(--border);margin-top:.6rem;padding-top:.5rem">
+      <button onclick="clearCache()" style="width:100%;padding:.5rem;background:var(--bg);border:1px solid var(--border2);border-radius:8px;color:var(--text2);cursor:pointer;font-family:inherit;font-size:.78rem;font-weight:600;display:flex;align-items:center;justify-content:center;gap:.4rem">
+        <span>↺</span>App aktualisieren
+      </button>
+      <div style="font-size:9px;color:var(--text3);text-align:center;margin-top:.25rem">Lädt die neueste Version</div>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div id="main-content">
+    <div class="empty-state">🐄 HerdenPro lädt…</div>
+  </div>
+
+  <!-- Bottom Nav -->
+  <nav id="bottom-nav">
+    <button class="nav-item active" data-view="dashboard"    onclick="navigate('dashboard')"><span class="nav-icon">⌂</span>Start</button>
+    <button class="nav-item"        data-view="herde"        onclick="navigate('herde')"><span class="nav-icon">🐄</span>Herde</button>
+    <button class="nav-item"        data-view="saison"       onclick="navigate('saison')"><span class="nav-icon">⛰</span>Saison</button>
+    <button class="nav-item"        data-view="milch"        onclick="navigate('milch')"><span class="nav-icon">🥛</span>Milch</button>
+    <button class="nav-item"        data-view="mehr"         id="nav-mehr" onclick="window.toggleMehrMenu&&window.toggleMehrMenu(event)"><span class="nav-icon">⋯</span>Mehr</button>
+  </nav>
+
+  <!-- Mehr-Menü -->
+  <div id="mehr-menu" style="display:none;position:fixed;bottom:calc(var(--nav-h) + var(--safe-b));left:0;right:0;z-index:50;padding:.6rem;background:linear-gradient(180deg,var(--bg2),var(--bg));border-top:1px solid var(--border2);box-shadow:0 -8px 30px rgba(0,0,0,.4);max-height:80vh;overflow-y:auto">
+    <!-- User-Header: für alle Rollen sichtbar, damit auch Rollen ohne Einstellungen-Zugriff abmelden können -->
+    <div id="mehr-user-header" style="display:flex;align-items:center;justify-content:space-between;gap:.5rem;padding:.5rem .7rem;background:var(--bg3);border:1px solid var(--border);border-radius:10px;margin-bottom:.6rem"></div>
+    <div id="mehr-grid"></div>
+    <div style="text-align:center;margin-top:.5rem;display:flex;justify-content:center;gap:.5rem;flex-wrap:wrap">
+
+      <button onclick="toggleMehrAnpassen()" style="background:none;border:1px solid var(--border);border-radius:20px;color:var(--text3);font-size:.72rem;cursor:pointer;font-family:inherit;padding:.25rem .8rem">⚙ Anpassen</button>
+    </div>
+
+    <div id="mehr-anpassen" style="display:none;margin-top:.4rem;padding-top:.4rem;border-top:1px solid var(--border)">
+      <div style="font-size:.7rem;color:var(--text3);margin-bottom:.4rem;text-align:center">◆ = in Hauptnavigation · Antippen zum Wechseln</div>
+      <div id="alle-module-grid"></div>
+    </div>
+    <!-- Abmelden-Button ganz unten: für Rollen ohne Einstellungen-Zugriff -->
+    <div style="margin-top:.6rem;padding-top:.6rem;border-top:1px solid var(--border);text-align:center">
+      <button onclick="doLogout();document.getElementById('mehr-menu').style.display='none'"
+        style="background:rgba(200,60,60,.12);border:1px solid rgba(200,60,60,.4);color:#e05a5a;font-size:.85rem;font-weight:600;padding:.55rem 1.2rem;border-radius:10px;cursor:pointer;font-family:inherit;width:100%;max-width:280px">
+        ⎋ Abmelden
+      </button>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<script src="app-icons.js"></script>
+<script src="app-core.js"></script>
+<script src="app-views.js"></script>
+<script src="app-features.js"></script>
+<script src="app-milch-v2.js"></script>
+<script src="app-milch-screenshot.js"></script>
+<script src="app-email-send.js"></script>
+<script src="app-auth-refresh.js"></script>
+<script src="app-sennerei.js"></script>
+<script src="app-saisonabschluss.js"></script>
+<script src="app-milestone.js"></script>
+<script src="app-milch-xlsx.js"></script>
+<script src="app-milchsperre.js"></script>
+<script src="app-install.js"></script>
+<script src="app-sennerei-produktion.js"></script>
+<script src="app-sennerei-verkauf.js"></script>
+<script src="app-onboarding.js"></script>
+<script src="app-suche.js"></script>
+<script src="app-env-switch.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  var mb = document.getElementById('nav-mehr');
+  if(mb) mb.onclick = function(e) {
+    window.toggleMehrMenu && window.toggleMehrMenu(e);
+  };
+  // Initialize Firebase
+  try {
+    let app;
+    try { app = firebase.app(); } catch(e2) { app = firebase.initializeApp(window.FIREBASE_CONFIG); }
+    db = firebase.database();
+    db_instance = db;
+    initAuth();
+  } catch(e) {
+    console.error('Firebase init error:', e);
+    const errEl = document.getElementById('login-error');
+    if(errEl) { errEl.textContent = 'Verbindungsfehler. Bitte Seite neu laden.'; errEl.style.display=''; }
+  }
+});
+</script>
+
+  <!-- FAB wurde auf User-Wunsch entfernt — Module nutzen den "+ Neu"-Button im Header. -->
+
+  <!-- Käse-Modul-Template (vom Käse-Render genutzt) -->
+  <div id="kaese-template" style="display:none"></div>
+
+</body>
+</html>
