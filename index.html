@@ -49,8 +49,8 @@ if(localStorage.getItem('hp_version') !== 'v54.20') {
       });
     }
     // Reload once after clearing
-    if(!sessionStorage.getItem('reloaded_v54_9')) {
-      sessionStorage.setItem('reloaded_v54_9','1');
+    if(!sessionStorage.getItem('reloaded_' + localStorage.getItem('hp_version'))) {
+      sessionStorage.setItem('reloaded_' + localStorage.getItem('hp_version'),'1');
       window.location.reload(true);
     }
   }
