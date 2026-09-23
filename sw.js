@@ -1,4 +1,4 @@
-const CACHE = 'herdenpro-v322';
+const CACHE = 'herdenpro-v323';
 
 // Relative Pfade → funktioniert unter /herdenpro/ UND /HerdenPro-Falkaunsalm/
 const SHELL_FILES = [
