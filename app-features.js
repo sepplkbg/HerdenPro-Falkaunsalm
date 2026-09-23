@@ -623,6 +623,8 @@ window.restoreBackup = async function(input) {
       'journal':      data.journal,
       'kontakte':     data.kontakte,
     };
+    // v54.19: zusätzliche Bereiche aus neuen Backups (backupVersion 2) — alte Backups bleiben kompatibel
+    (window.HP_BACKUP_PFADE_ZUSATZ || []).forEach(p => { if(data[p] !== undefined) map[p] = data[p]; });
 
     let restored = 0;
     for(const [pfad, payload] of Object.entries(map)) {
