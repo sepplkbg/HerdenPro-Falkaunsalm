@@ -20,6 +20,8 @@
 
   const ARCHIV_ROOT = 'saisonArchivDaten';
   const _cnt = o => (o && typeof o === 'object') ? Object.keys(o).length : 0;
+  // saisonArchiv ist eine globale let-Variable aus app-core.js (nicht auf window)
+  const _sa = () => (typeof saisonArchiv !== 'undefined' && saisonArchiv) ? saisonArchiv : (window.saisonArchiv || {});
 
   // Gibt es überhaupt Daten einer alten Saison?
   window.hpHatSaisonDaten = function() {
@@ -74,7 +76,7 @@
     // Verweis in der (kleinen) Saison-Kennzahlen-Liste, damit der Archiv-Knoten nie komplett geladen werden muss
     updates['saisonArchiv/' + key + '/archivDatenKey'] = key;
     updates['saisonArchiv/' + key + '/archiviertAm'] = meta.archiviertAm;
-    if(!(window.saisonArchiv && window.saisonArchiv[key] && window.saisonArchiv[key].jahr)) updates['saisonArchiv/' + key + '/jahr'] = jahr || null;
+    if(!(_sa()[key] && _sa()[key].jahr)) updates['saisonArchiv/' + key + '/jahr'] = jahr || null;
     await db.ref('/').update(updates);
     // 4) Kontrolle: Archiv vollständig?
     for(const p of Object.keys(daten)) {
@@ -86,7 +88,7 @@
 
   // ── Archiv ansehen ──────────────────────────────────────────────────────
   function _archivListe() {
-    return Object.entries(window.saisonArchiv || {})
+    return Object.entries(_sa())
       .filter(([k, v]) => v && v.archivDatenKey)
       .map(([k, v]) => ({ key: v.archivDatenKey, jahr: v.jahr || k, am: v.archiviertAm }))
       .sort((a, b) => String(b.key).localeCompare(String(a.key)));
