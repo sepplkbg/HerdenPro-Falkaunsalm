@@ -607,5 +607,123 @@
     }
   };
 
+  // ═══ A14: SELBSTTEST ════════════════════════════════════════════════════
+  // Für jeden Benutzer (AA-Menü oben rechts): prüft Version, Module, Verbindung,
+  // Rechte, Uhrzeit, Offline-Speicher, wartende Werte. Bericht kann kopiert werden.
+  const zeitlimit = (p, ms) => Promise.race([p, new Promise((_, rej) => setTimeout(() => rej(new Error('keine Antwort (' + ms / 1000 + ' s)')), ms))]);
+  async function selbsttest(melde) {
+    const E = [];
+    const add = (s, titel, info) => { E.push({ s, titel, info: info || '' }); if(melde) melde(E); };
+    // 1 Version
+    const v = localStorage.getItem('hp_version') || '?';
+    add('ok', 'App-Version', v);
+    // 2 Module & Bibliotheken
+    const mods = { 'Sicherheit': window.hpEsc, 'Milch': window.pushMilchWert, 'Sennerei': window.renderSennerei, 'Saison-Archiv': window.hpSaisonArchivieren,
+      'Extras': window.hpSonnenmodus, 'Daten': window.hpDatenCheck, 'Suche': window.hpSuche, 'Excel': window.ExcelJS,
+      'Karte': window.L, 'QR': window.jsQR, 'PDF': window.pdfjsLib, 'Bild': window.html2canvas, 'Icons': window.customElements && customElements.get('iconify-icon') };
+    const fehlt = Object.entries(mods).filter(([, f]) => !f).map(([n]) => n);
+    add(fehlt.length ? 'err' : 'ok', 'Programmteile', fehlt.length ? 'fehlen: ' + fehlt.join(', ') : Object.keys(mods).length + ' geladen');
+    // 3 Internet & Datenbank
+    add(navigator.onLine ? 'ok' : 'warn', 'Internet', navigator.onLine ? 'verbunden' : 'offline – Eingaben werden gespeichert und später übertragen');
+    let verbunden = false;
+    try { verbunden = (await zeitlimit(firebase.database().ref('.info/connected').once('value'), 5000)).val() === true; } catch(e) {}
+    add(verbunden ? 'ok' : (navigator.onLine ? 'err' : 'warn'), 'Datenbank', verbunden ? 'verbunden (' + ((firebase.app().options || {}).projectId || '') + ')' : 'nicht verbunden');
+    // 4 Anmeldung
+    const u = firebase.auth && firebase.auth().currentUser;
+    add(u ? 'ok' : 'err', 'Anmeldung', u ? (u.email || 'angemeldet') + ' · Rolle: ' + (window._currentRole || '?') : 'nicht angemeldet');
+    // 5 Lesen & Schreiben
+    if(verbunden && u) {
+      try { await zeitlimit(firebase.database().ref('kuehe').limitToFirst(1).once('value'), 8000); add('ok', 'Daten lesen', 'erlaubt'); }
+      catch(e) { add('err', 'Daten lesen', e.message); }
+      try {
+        const r = firebase.database().ref('papierkorb/__selbsttest_' + u.uid);
+        await zeitlimit(r.set({ zeit: Date.now(), pfad: '__selbsttest' }), 8000);
+        await zeitlimit(window._hpRemoveOhnePapierkorb(r), 8000);
+        add('ok', 'Daten schreiben', 'erlaubt');
+      } catch(e) { add(/permission/i.test(e.message) ? 'warn' : 'err', 'Daten schreiben', /permission/i.test(e.message) ? 'Test-Bereich gesperrt – Firebase-Regeln neu veröffentlichen' : e.message); }
+      try {
+        const off = (await zeitlimit(firebase.database().ref('.info/serverTimeOffset').once('value'), 5000)).val() || 0;
+        const min = Math.round(Math.abs(off) / 60000);
+        add(min >= 5 ? 'err' : 'ok', 'Uhrzeit am Gerät', min >= 5 ? 'weicht ' + min + ' Minuten ab – bitte Datum/Uhrzeit im Handy auf automatisch stellen' : 'stimmt');
+      } catch(e) {}
+    }
+    // 6 wartende Milchwerte & Konflikte
+    try {
+      const pid = (window.FIREBASE_CONFIG && window.FIREBASE_CONFIG.projectId) || 'default';
+      const p = JSON.parse(localStorage.getItem('milchPendingV2:' + pid) || '{}');
+      let n = 0; for(const k in p) n += Object.keys(p[k] || {}).length;
+      const kf = JSON.parse(localStorage.getItem('milchKonflikteV2:' + pid) || '[]');
+      const nk = Array.isArray(kf) ? kf.length : Object.keys(kf || {}).length;
+      add(n ? 'warn' : 'ok', 'Wartende Milchwerte', n ? n + ' noch nicht übertragen' : 'keine');
+      if(nk) add('warn', 'Milch-Konflikte', nk + ' offen');
+    } catch(e) {}
+    // 7 Offline-Speicher
+    try {
+      const sw = navigator.serviceWorker && navigator.serviceWorker.controller;
+      const keys = await caches.keys();
+      const scope = (navigator.serviceWorker && (await navigator.serviceWorker.getRegistration()) || {}).scope || location.href;
+      const appId = new URL(scope).pathname.replace(/\W+/g, '_');
+      const eigen = keys.filter(k => k.endsWith(appId));
+      let dateien = 0; for(const k of eigen) dateien += (await (await caches.open(k)).keys()).length;
+      add(sw && dateien > 20 ? 'ok' : 'warn', 'Offline-Betrieb', (sw ? 'aktiv' : 'Service Worker fehlt') + ' · ' + dateien + ' Dateien gespeichert');
+    } catch(e) { add('warn', 'Offline-Betrieb', e.message); }
+    try {
+      if(navigator.storage && navigator.storage.estimate) {
+        const est = await navigator.storage.estimate();
+        const frei = (est.quota - est.usage) / 1048576;
+        add(frei < 50 ? 'warn' : 'ok', 'Speicherplatz', Math.round(est.usage / 1048576) + ' MB belegt' + (frei < 50 ? ' – Handy fast voll' : ''));
+      }
+    } catch(e) {}
+    // 8 Daten-Check
+    try {
+      const P = datenCheck();
+      const rot = P.filter(p => p.stufe === 'rot').reduce((a, p) => a + p.eintraege.length, 0);
+      add(rot ? 'warn' : 'ok', 'Daten-Check', rot ? rot + ' Fehler in den Daten (Backup → Daten-Check)' : 'keine Fehler');
+    } catch(e) {}
+    add('ok', 'Gerät', (navigator.userAgent.match(/Android [\d.]+|iPhone OS [\d_]+|Windows NT [\d.]+|Mac OS X [\d_]+/) || ['?'])[0] + ' · ' + screen.width + '×' + screen.height);
+    return E;
+  }
+  window.hpSelbsttest = selbsttest;
+  window.hpSelbsttestZeigen = async function() {
+    document.getElementById('schrift-popup') && (document.getElementById('schrift-popup').style.display = 'none');
+    document.getElementById('hp-selbsttest')?.remove();
+    const ov = document.createElement('div');
+    ov.id = 'hp-selbsttest';
+    ov.style.cssText = 'position:fixed;inset:0;z-index:99500;background:rgba(0,0,0,.6);display:flex;align-items:center;justify-content:center;padding:1rem';
+    ov.innerHTML = '<div style="background:var(--bg2);border:1px solid var(--gold2);border-radius:14px;max-width:440px;width:100%;max-height:88vh;overflow:auto;padding:1rem 1.1rem">' +
+      '<div style="font-family:Georgia,serif;color:var(--gold);font-size:1.2rem;font-weight:700;margin-bottom:.5rem">🧪 Selbsttest</div>' +
+      '<div id="hp-st-liste" style="font-size:.86rem">⏳ Prüfe…</div>' +
+      '<div style="display:flex;gap:.5rem;margin-top:.9rem"><button class="btn-secondary" style="flex:1" id="hp-st-kopie">📋 Bericht kopieren</button>' +
+      '<button class="btn-primary" style="flex:1" onclick="document.getElementById(\'hp-selbsttest\').remove()">Schließen</button></div></div>';
+    ov.addEventListener('click', e => { if(e.target === ov) ov.remove(); });
+    document.body.appendChild(ov);
+    const SYM = { ok: ['✓', 'var(--green)'], warn: ['⚠', 'var(--orange)'], err: ['✗', 'var(--red)'] };
+    const zeichne = E => { const l = document.getElementById('hp-st-liste'); if(!l) return;
+      l.innerHTML = E.map(e => '<div style="display:flex;gap:.5rem;padding:.35rem 0;border-bottom:1px solid var(--border)"><b style="color:' + SYM[e.s][1] + ';width:1rem">' + SYM[e.s][0] + '</b>' +
+        '<div style="flex:1"><b>' + esc(e.titel) + '</b><div style="font-size:.76rem;color:var(--text3)">' + esc(e.info) + '</div></div></div>').join(''); };
+    const E = await selbsttest(zeichne);
+    zeichne(E);
+    const fehler = E.filter(e => e.s === 'err').length, warn = E.filter(e => e.s === 'warn').length;
+    const l = document.getElementById('hp-st-liste');
+    if(l) l.insertAdjacentHTML('afterbegin', '<div style="font-weight:700;margin-bottom:.4rem;color:' + (fehler ? 'var(--red)' : warn ? 'var(--orange)' : 'var(--green)') + '">' +
+      (fehler ? fehler + ' Problem(e) gefunden' : warn ? 'Läuft, mit ' + warn + ' Hinweis(en)' : 'Alles in Ordnung ✓') + '</div>');
+    const btn = document.getElementById('hp-st-kopie');
+    if(btn) btn.onclick = async () => {
+      const txt = 'HerdenPro Selbsttest ' + new Date().toLocaleString('de-AT') + '\n' + E.map(e => SYM[e.s][0] + ' ' + e.titel + ': ' + e.info).join('\n');
+      try { await navigator.clipboard.writeText(txt); btn.textContent = '✓ Kopiert'; } catch(e) { prompt('Bericht:', txt); }
+    };
+  };
+  (function stKnopf() {
+    const pop = document.getElementById('schrift-popup');
+    if(!pop) { setTimeout(stKnopf, 1000); return; }
+    if(document.getElementById('hp-st-btn')) return;
+    const b = document.createElement('button');
+    b.id = 'hp-st-btn'; b.type = 'button';
+    b.textContent = '🧪 Selbsttest';
+    b.style.cssText = 'display:block;width:100%;margin-top:.5rem;padding:.55rem;border-radius:8px;border:1.5px solid var(--border2);background:var(--bg3);color:var(--text);font-weight:700;cursor:pointer';
+    b.onclick = e => { e.stopPropagation(); window.hpSelbsttestZeigen(); };
+    pop.appendChild(b);
+  })();
+
   console.log('[HP-Daten] geladen');
 })();

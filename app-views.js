@@ -3479,9 +3479,7 @@ window.uploadFoto = function(kuhId, input) {
     await set(ref(db,'fotos/'+kuhId), { data, updatedAt: Date.now() });
   });
 };
-window.deleteFoto = async function(kuhId) {
-  if(confirm('Foto löschen?')) await remove(ref(db,'fotos/'+kuhId));
-};
+/* v54.31: alte, überschriebene Fassung von window.deleteFoto entfernt (toter Code) */
 
 // ══════════════════════════════════════════════════════════════
 //  KALENDER
@@ -7485,7 +7483,7 @@ window.exportMolkereiExcel = function() {
   if(typeof XLSX === 'undefined') {
     alert('Bibliothek wird geladen, bitte nochmal tippen...');
     const s=document.createElement('script');
-    s.src='https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';
+    s.src='lib/xlsx.full.min.js';
     s.onload=()=>exportMolkereiExcel();
     document.head.appendChild(s);
     return;
@@ -8878,27 +8876,7 @@ window.deleteKraftfutter = async function(id, kuhId) {
 //  HIRTEN-ANIMATION bei Zählung
 // ══════════════════════════════════════════════════════════════
 let _zaehlungAnimShown = false;
-window._showZaehlungAnim = function() {
-  if(_zaehlungAnimShown) return;
-  _zaehlungAnimShown = true;
-  const overlay = document.createElement('div');
-  overlay.style.cssText = 'position:fixed;inset:0;background:var(--bg);z-index:500;display:flex;flex-direction:column;align-items:center;justify-content:center;animation:fadeIn .3s ease';
-  overlay.innerHTML = `
-    
-    <div style="font-size:.9rem;color:var(--text3);margin-bottom:1rem;animation:fadeInAnim .5s ease">Zählung wird gestartet…</div>
-    <div class="hirte-scene">
-      <div class="kuh">🐄</div>
-      <div class="hirte">🧑‍🌾</div>
-      <div class="grass"></div>
-    </div>
-    <div style="font-size:1.8rem;margin-top:1rem">✓</div>
-  `;
-  document.body.appendChild(overlay);
-  setTimeout(()=>{
-    overlay.style.animation='fadeOutAnim .4s ease forwards';
-    setTimeout(()=>{overlay.remove();_zaehlungAnimShown=false;},400);
-  }, 2000);
-};
+/* v54.31: alte, überschriebene Fassung von window._showZaehlungAnim entfernt (toter Code) */
 
 // Hook into navigate for zaehlung
 const _origNavigate = window.navigate;
