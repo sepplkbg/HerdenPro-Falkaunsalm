@@ -12,6 +12,13 @@
   // ═══ A13: Was ist neu ═══════════════════════════════════════════════════
   // Neueste Version oben. Nur Punkte, die Nutzer merken.
   const CHANGELOG = [
+    { v: 'v54.30', punkte: [
+      'Papierkorb: Gelöschtes 30 Tage zurückholbar (Backup → Daten-Sicherheit)',
+      'Daten-Check findet Unstimmigkeiten (fehlender Bauer, doppelte Nummer, Ohrmarke …)',
+      'Behandlung: häufige Behandlungen mit einem Tipp übernehmen',
+      'Saisonstart-Vorlage mit Auswahllisten, auf Wunsch mit Bauern & Kühen von heuer',
+      'Admin: wöchentliche Wiederherstellungspunkte'
+    ]},
     { v: 'v54.29', punkte: [
       'Sonnenmodus: helle Ansicht für draußen (AA-Menü oben rechts)',
       'Neben dem Verbindungspunkt siehst du, wie viele Milchwerte noch auf Internet warten',

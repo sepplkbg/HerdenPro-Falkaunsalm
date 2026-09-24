@@ -6879,9 +6879,13 @@ function renderBackup() {
       <p style="font-size:.82rem;color:var(--text2);margin-bottom:.8rem;line-height:1.6">
         Schnelle Erfassung zum Saisonstart: Eine Excel‑Zeile pro Kuh.<br>
         <b>Bauer</b> (Name, Anzahl, BIO, Verkauf%, Adresse) · <b>Kuh</b> (Ohrmarke, Nr, Name, Gruppen, Notiz, Besamungsdatum).
-        Vorlage <a href="Saisonstart_Vorlage.xlsx" download style="color:var(--gold)">hier herunterladen</a>.
+        Vorlage mit Auswahllisten (JA/NEIN, Bauern, Gruppen) hier erstellen:
       </p>
       <div style="display:flex;flex-direction:column;gap:.5rem">
+        <div style="display:flex;gap:.5rem;flex-wrap:wrap">
+          <button class="btn-secondary" style="flex:1;min-width:140px" onclick="hpSaisonVorlage(false)">📄 Leere Vorlage</button>
+          <button class="btn-secondary" style="flex:1;min-width:140px" onclick="hpSaisonVorlage(true)">📋 Vorlage mit Bauern &amp; Kühen von heuer</button>
+        </div>
         <label style="cursor:pointer;display:block">
           <span class="btn-primary" style="display:block;text-align:center;padding:.6rem;border-radius:var(--radius-sm);cursor:pointer;background:linear-gradient(135deg,var(--gold),var(--gold2))">
             🌱 Saisonstart Excel importieren
