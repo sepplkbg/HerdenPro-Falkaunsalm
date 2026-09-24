@@ -66,6 +66,7 @@
       color-scheme: light;
     }
     html.hp-hell body { background: var(--bg) !important; color: var(--text); }
+    html.hp-hell #root { background: var(--bg) !important; }
     html.hp-hell #topbar, html.hp-hell #bottom-nav, html.hp-hell .bottom-nav { background: var(--bg2) !important; border-color: var(--border) !important; }
     html.hp-hell .list-card, html.hp-hell .card-section, html.hp-hell .stat-card, html.hp-hell .form-sheet { background: var(--bg2) !important; }
     html.hp-hell input, html.hp-hell select, html.hp-hell textarea, html.hp-hell .inp { background: #fff !important; color: var(--text) !important; border-color: var(--border2) !important; }
@@ -142,7 +143,7 @@
   function milchListeCheck() {
     if(window.currentView !== 'milch_erfassen') { document.getElementById('hp-milch-neu')?.remove(); return; }
     if(window._milchZeigeAlle === true) return;   // "alle Kühe"-Ansicht: nicht vergleichen
-    const rows = [...document.querySelectorAll('.milch-kuh-row[data-kid]')].map(r => r.dataset.kid);
+    const rows = [...new Set([...document.querySelectorAll('#main-content input.kuh-liter[data-id]')].map(i => i.dataset.id))];
     if(!rows.length) return;
     const soll = melkKuehe();
     const neu = soll.filter(id => !rows.includes(id));
