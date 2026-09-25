@@ -47,7 +47,7 @@
     // alle Einträge seit der zuletzt gesehenen Version (neueste zuerst)
     let neu = [];
     for(const c of CHANGELOG) { if(!force && c.v === gesehen) break; neu.push(c); if(force) break; }
-    if(!neu.length) neu = CHANGELOG.slice(0, 1);
+    if(!neu.length) { localStorage.setItem('hp_whatsnew_seen', aktuell); return; }   // nur Fehlerbehebungen
     const eintrag = { v: neu.length > 1 ? neu[neu.length - 1].v + ' – ' + neu[0].v : neu[0].v, punkte: [].concat.apply([], neu.map(c => c.punkte)) };
     if(!eintrag.punkte.length) return;
     localStorage.setItem('hp_whatsnew_seen', aktuell);

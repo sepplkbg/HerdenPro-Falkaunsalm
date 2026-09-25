@@ -4232,6 +4232,7 @@ window.ladeWetterPrognose = async function() {
   const WMO_ICONS2 = {0:'☀️',1:'🌤️',2:'⛅',3:'☁️',45:'🌫️',48:'🌫️',51:'🌦️',53:'🌦️',55:'🌦️',61:'🌧️',63:'🌧️',65:'🌧️',71:'🌨️',73:'🌨️',75:'❄️',80:'🌦️',81:'🌧️',82:'⛈️',95:'⛈️',99:'⛈️'};
   const WMO_DESC2 = {0:'Klar',1:'Klar',2:'Teils bewölkt',3:'Bedeckt',45:'Nebel',48:'Nebel',51:'Nieselregen',53:'Nieselregen',55:'Nieselregen',61:'Leichter Regen',63:'Regen',65:'Starker Regen',71:'Leichter Schnee',73:'Schnee',75:'Starker Schnee',80:'Schauer',81:'Schauer',82:'Starke Schauer',95:'Gewitter',99:'Gewitter'};
   
+  const ort = localStorage.getItem('wetterOrt') || 'Innsbruck';   // v54.31: fehlte → Prognose lud nie
   const coords = ORTE[ort];
   if(!coords) return;
   
