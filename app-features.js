@@ -2565,8 +2565,9 @@ function renderMilch() {
                 const wocheZurueck = heute - 7 * 86400000;
                 // Trockenstell-Behandlungen NICHT als WZ zählen (Laktation-Ende, keine „Verwerfen"-Regel)
                 const _istTs = (b) => window.hpIstTrockenstellBehandlung && window.hpIstTrockenstellBehandlung(b);
+                // v54.44: Hinweis IMMER bis zum Ende der Wartezeit – auch wenn die Behandlung schon abgeschlossen ist
                 const aktiveWzBeh = Object.values(behandlungen||{}).find(b =>
-                  b && b.aktiv !== false && b.kuhId === id &&
+                  b && b.kuhId === id &&
                   b.wzMilchEnde && b.wzMilchEnde > heute && !_istTs(b)
                 );
                 // Auch: WZ war irgendwann in den letzten 7 Tagen aktiv (vergangene WZ diese Woche)
