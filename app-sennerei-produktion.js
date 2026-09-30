@@ -341,9 +341,9 @@
 
         /* Sticky footer mit Buttons */
         #prod-form .pf-foot { position:sticky; bottom:0; background:linear-gradient(180deg,transparent,var(--bg,#0c1a09) 25%); padding:1rem; padding-top:1.5rem; border-top:1px solid rgba(212,168,75,.15); flex-shrink:0; display:flex; gap:.5rem; }
-        #prod-form .pf-foot button { padding:1rem; border-radius:12px; font-size:1rem; font-weight:700; cursor:pointer; border:none; font-family:inherit; }
+        #prod-form .pf-foot button { padding:.9rem .4rem; border-radius:12px; font-size:min(1rem,4.2vw); font-weight:700; cursor:pointer; border:none; font-family:inherit; min-width:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }   /* v54.39: 3 Knöpfe passen aufs Handy */
         #prod-form .pf-cancel { flex:1; background:rgba(255,255,255,.08); color:var(--text,#eee); }
-        #prod-form .pf-save { flex:2; background:var(--gold,#d4a84b); color:#000; }
+        #prod-form .pf-save { flex:1.6; background:var(--gold,#d4a84b); color:#000; }
         #prod-form .pf-save:disabled { opacity:.5; cursor:wait; }
         #prod-form .pf-delete { flex:1; background:rgba(220,60,60,.15); color:var(--red,#dc3c3c); border:1px solid rgba(220,60,60,.4); }
       `;
