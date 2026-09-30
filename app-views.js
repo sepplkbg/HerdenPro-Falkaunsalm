@@ -7482,7 +7482,7 @@ window.closePopup = function() {
 window.exportMolkereiExcel = function() {
   // Wir brauchen SheetJS (XLSX library)
   if(typeof XLSX === 'undefined') {
-    alert('Bibliothek wird geladen, bitte nochmal tippen...');
+    // v54.34: lädt lokal und exportiert danach automatisch (kein "nochmal tippen" → sonst doppelte Datei)
     const s=document.createElement('script');
     s.src='lib/xlsx.full.min.js';
     s.onload=()=>exportMolkereiExcel();
