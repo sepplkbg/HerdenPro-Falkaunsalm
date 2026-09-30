@@ -331,7 +331,7 @@
         #prod-form .pf-spez-row .row1 { display:flex; gap:.35rem; align-items:center; width:100%; }
         #prod-form .pf-spez-row .row2 { display:flex; gap:.35rem; align-items:center; width:100%; }
         #prod-form .pf-spez-row input.name { flex:1; min-width:0; }
-        #prod-form .pf-spez-row input.menge { width:5.5rem; flex-shrink:0; text-align:center; font-weight:700; }
+        #prod-form .pf-spez-row input.menge { flex:1; min-width:0; text-align:center; font-weight:700; }   /* v54.38: eigene Zeile – Name war am Handy unsichtbar */
         #prod-form .pf-spez-row select.einheit { width:5rem; flex-shrink:0; }
         #prod-form .pf-spez-row input.charge, #prod-form .pf-spez-row input.km { flex:1; min-width:0; }
         #prod-form .pf-spez-row .charge-label { font-size:.72rem; color:var(--text3,#888); letter-spacing:.05em; text-transform:uppercase; padding-left:.2rem; white-space:nowrap; }
@@ -486,10 +486,13 @@
     const einheiten = _EINHEITEN.map(e => `<option value="${e}"${s.einheit===e?' selected':''}>${e}</option>`).join('');
     return `<div class="pf-spez-row" data-idx="${i}">
       <div class="row1">
-        <input type="text" class="name" value="${_esc(s.name||'')}" placeholder="z.B. Graukäse"/>
-        <input type="text" class="menge" inputmode="decimal" value="${s.menge||''}" placeholder="Menge"/>
-        <select class="einheit">${einheiten}</select>
+        <input type="text" class="name" value="${_esc(s.name||'')}" placeholder="Name, z.B. Graukäse"/>
         <button type="button" class="del" onclick="_pfDelSpez(${i})">✕</button>
+      </div>
+      <div class="row2">
+        <span class="charge-label">Menge</span>
+        <input type="text" class="menge" inputmode="decimal" value="${s.menge != null ? String(s.menge).replace('.', ',') : ''}" placeholder="0"/>
+        <select class="einheit">${einheiten}</select>
       </div>
       <div class="row2">
         <span class="charge-label">Charge</span>
