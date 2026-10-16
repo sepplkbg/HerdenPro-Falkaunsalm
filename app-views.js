@@ -1752,7 +1752,7 @@ function renderZaehlung() {
 function hpOhrmarkeHTML(k, klein){
   const om=String((k&&k.ohrmarke)||'').trim();
   if(!om) return `<div style="font-size:${klein?'.68rem':'.78rem'};color:var(--text3);font-style:italic">keine Ohrmarke</div>`;
-  return `<div class="hp-ohrmarke" style="font-size:${klein?'.72rem':'.85rem'};font-weight:700;color:var(--gold);letter-spacing:.03em;white-space:nowrap">🏷 ${om}</div>`;
+  return `<div class="hp-ohrmarke" style="font-size:${klein?'.72rem':'.85rem'};font-weight:700;color:var(--gold);letter-spacing:.02em;overflow-wrap:anywhere;line-height:1.25">🏷 ${om}</div>`;
 }
 window.setZaehTab=function(t){window._zaehTab=t;render();};
 window.setZaehGruppe=function(g){window._zaehGruppe=g;window._zaehTab='alle';render();};
@@ -3423,7 +3423,7 @@ function renderKontrolle() {
         <button class="kuh-chip" onclick="zaehlKuhById('${id}')">
           <span class="chip-nr">#${k.nr}</span>
           ${k.name?`<span class="chip-kuh">${k.name}</span>`:''}
-          ${k.ohrmarke?`<span style="font-size:.7rem;font-weight:700;color:var(--gold);margin-left:3px;white-space:nowrap">🏷 ${k.ohrmarke}</span>`:''}
+          ${k.ohrmarke?`<span style="font-size:.7rem;font-weight:700;color:var(--gold);margin-left:3px">🏷 ${k.ohrmarke}</span>`:''}
           ${k.gruppe?`<span style="font-size:.65rem;color:var(--text3);margin-left:2px">${k.gruppe}</span>`:''}
         </button>`).join('')}
     </div>` : fehlend.length > 50 ? `
