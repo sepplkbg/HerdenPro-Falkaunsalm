@@ -3438,8 +3438,8 @@ function renderKontrolle() {
           <div style="flex:1;min-width:0">
             <div class="list-card-title">${k.name||'–'}</div>
             ${hpOhrmarkeHTML(k,true)}
+            ${k.gruppe?`<div style="font-size:.65rem;color:var(--text3)">${k.gruppe}</div>`:''}
           </div>
-          ${k.gruppe?`<span class="tag tag-gray" style="font-size:.65rem">${k.gruppe}</span>`:''}
           <button class="remove-btn" onclick="entferneZaehlung('${id}')">✕</button>
         </div>`).join('')}
     </div>

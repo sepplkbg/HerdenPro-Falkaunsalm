@@ -12,7 +12,7 @@
   // ═══ A13: Was ist neu ═══════════════════════════════════════════════════
   // Neueste Version oben. Nur Punkte, die Nutzer merken.
   const CHANGELOG = [
-    { v: 'v54.49', punkte: [
+    { v: 'v54.50', punkte: [
       'Herdenzählung & Kontrolle: Bei jeder Kuh steht jetzt die Ohrmarke (Suche nach Ohrmarke möglich)',
       'Behandlung löschen: klare Meldung, falls die Anmeldung abgelaufen ist'
     ]},
