@@ -29,6 +29,7 @@ const SHELL_FILES = [
   'app-email-send.js',
   'app-env-switch.js',
   'app-install.js',
+  'app-auswertung.js',
   // v54.31: Bibliotheken lokal (keine fremden Server beim Start)
   'lib/firebase-app-compat.js',
   'lib/firebase-database-compat.js',
