@@ -185,7 +185,7 @@
   function diffTxt(diff) {
     if(diff == null) return { t: 'Bargeld zählen und eintragen', f: 'var(--text3)' };
     if(Math.abs(diff) < 0.005) return { t: '✓ Kasse stimmt', f: 'var(--green)' };
-    return diff > 0 ? { t: '+' + eur(diff) + ' € zu viel in der Kasse', f: '#e67e22' } : { t: eur(diff) + ' € fehlen in der Kasse', f: '#e74c3c' };
+    return diff > 0 ? { t: '+' + eur(diff) + ' € zu viel in der Kasse', f: '#e67e22' } : { t: eur(Math.abs(diff)) + ' € fehlen in der Kasse', f: '#e74c3c' };
   }
 
   window.hpTaRechnen = function() {

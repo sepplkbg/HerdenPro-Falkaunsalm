@@ -6557,7 +6557,7 @@ function renderSaisonvergleich() {
 
   return `
     <div class="page-header">
-      <h2>📈 Herdenvergleich</h2>
+      <h2>📈 Herden&shy;vergleich</h2>
       <div style="display:flex;gap:.35rem;flex-wrap:wrap">
         <button class="btn-xs" onclick="hpSaisonRueckblickPdf()">📄 Rückblick</button>
         <button class="btn-xs" onclick="saisonArchivieren()">💾 Archivieren</button>
