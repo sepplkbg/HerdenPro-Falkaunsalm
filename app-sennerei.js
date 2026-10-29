@@ -10,6 +10,22 @@
   window.SENNEREI_VERSION = VERSION;
 
   // ── Utilities ──
+  // kg-Werte: Komma erlaubt, max. 2 Nachkommastellen (z.B. 10,52)
+  function kgTxt(n) {
+    const x = Math.round((parseFloat(n) || 0) * 100) / 100;
+    return String(x).replace('.', ',');
+  }
+  function kgFeld(id, wert, placeholder) {
+    const v = (wert === '' || wert == null || +wert === 0) ? '' : kgTxt(wert);
+    return `<input id="${id}" class="inp" type="text" inputmode="decimal" autocomplete="off" value="${v}" placeholder="${placeholder == null ? '' : String(placeholder).replace('.', ',')}" oninput="hpKgEingabe(this)" style="margin-bottom:.5rem" />`;
+  }
+  // Nur Ziffern + EIN Komma, höchstens 2 Nachkommastellen
+  window.hpKgEingabe = function(el) {
+    let v = String(el.value || '').replace(/\./g, ',').replace(/[^0-9,]/g, '');
+    const i = v.indexOf(',');
+    if(i >= 0) v = v.slice(0, i + 1) + v.slice(i + 1).replace(/,/g, '').slice(0, 2);
+    if(v !== el.value) el.value = v;
+  };
   function normalisierName(s) {
     return String(s || '').toLowerCase()
       .replace(/ä/g,'ae').replace(/ö/g,'oe').replace(/ü/g,'ue').replace(/ß/g,'ss')
@@ -357,7 +373,7 @@
       sumKaeseKlotze += (b.kaese?.klotze || 0);
       sumButterKlotze += (b.butter?.klotze || 0);
     });
-    const fmt = (n) => Math.round(n * 10) / 10;
+    const fmt = (n) => kgTxt(n);
     return `
       <div class="page-header">
         <h2>🥛 Woche ${woche.wocheNr}</h2>
@@ -455,7 +471,7 @@
     const parseNum = (id) => {
       const v = document.getElementById(id)?.value;
       const n = parseFloat(String(v||'').replace(',','.'));
-      return isNaN(n) ? 0 : n;
+      return isNaN(n) ? 0 : Math.round(n * 100) / 100;
     };
     const parseI = (id) => parseInt(document.getElementById(id)?.value) || 0;
     if(step === 2) {
@@ -661,8 +677,8 @@
               <span>${new Date(a.ts).toLocaleString('de-AT',{weekday:'short',day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'})}</span>
               <span>${a.signaturPng ? '✍ signiert' : '<span style="color:var(--orange)">ohne Unterschrift</span>'}</span>
             </div>
-            ${(a.kaese && a.kaese.abgeholt) ? `<div>🧀 ${a.kaese.abgeholt} kg${a.kaese.naturalrAbgeholt?' (+ '+a.kaese.naturalrAbgeholt+' Natur)':''}${(a.kaese.chargen||[]).length?' · '+a.kaese.chargen.join(', '):''}</div>` : ''}
-            ${(a.butter && a.butter.abgeholt) ? `<div>🧈 ${a.butter.abgeholt} kg${a.butter.naturalrAbgeholt?' (+ '+a.butter.naturalrAbgeholt+' Natur)':''}${(a.butter.chargen||[]).length?' · '+a.butter.chargen.join(', '):''}</div>` : ''}
+            ${(a.kaese && a.kaese.abgeholt) ? `<div>🧀 ${kgTxt(a.kaese.abgeholt)} kg${a.kaese.naturalrAbgeholt?' (+ '+kgTxt(a.kaese.naturalrAbgeholt)+' Natur)':''}${(a.kaese.chargen||[]).length?' · '+a.kaese.chargen.join(', '):''}</div>` : ''}
+            ${(a.butter && a.butter.abgeholt) ? `<div>🧈 ${kgTxt(a.butter.abgeholt)} kg${a.butter.naturalrAbgeholt?' (+ '+kgTxt(a.butter.naturalrAbgeholt)+' Natur)':''}${(a.butter.chargen||[]).length?' · '+a.butter.chargen.join(', '):''}</div>` : ''}
             ${a.signaturPng ? `<img src="${a.signaturPng}" alt="Unterschrift" style="display:block;max-height:44px;max-width:180px;margin-top:.3rem;background:#fff;border-radius:4px;padding:2px">` : ''}
           </div>`).join('')}
       </div>` : '';
@@ -705,12 +721,12 @@
         </div>
         <input type="hidden" id="sb-b-klotze" value="${d.klotze || 0}" />
         <label class="inp-label">Tatsächlich abgeholt (kg)</label>
-        <input id="sb-b-abgeholt" class="inp" type="number" step="0.1" min="0" inputmode="decimal" value="${d.abgeholt || ''}" placeholder="${bt.zumAbholen || 0}" style="margin-bottom:.5rem" />
+        ${kgFeld('sb-b-abgeholt', d.abgeholt, bt.zumAbholen || 0)}
         <label class="inp-label">Chargen (Produktionsdatum, kommagetrennt) — z.B. 1208, 1508</label>
         <input id="sb-b-chargen" class="inp" type="text" placeholder="z.B. 1208, 1508" value="${d.chargen || ''}" style="margin-bottom:.4rem" />
         ${chargenChips}
         ${bt.naturalrAnspruch ? `<label class="inp-label" style="margin-top:.6rem">Naturalrückgabe abgeholt (kg) — Anspruch: ${bt.naturalrAnspruch} kg</label>
-          <input id="sb-b-natabg" class="inp" type="number" step="0.1" min="0" inputmode="decimal" value="${d.naturalrAbgeholt || ''}" />` : '<input type="hidden" id="sb-b-natabg" value="0" />'}
+          ${kgFeld('sb-b-natabg', d.naturalrAbgeholt, '')}` : '<input type="hidden" id="sb-b-natabg" value="0" />'}
       </div>
     `;
   }
@@ -735,12 +751,12 @@
         <label class="inp-label">Laib (Stück)</label>
         <input id="sb-k-klotze" class="inp" type="number" step="1" min="0" inputmode="numeric" value="${d.klotze || ''}" placeholder="${k.klotze || ''}" style="margin-bottom:.5rem" />
         <label class="inp-label">Tatsächlich abgeholt (kg)</label>
-        <input id="sb-k-abgeholt" class="inp" type="number" step="0.1" min="0" inputmode="decimal" value="${d.abgeholt || ''}" placeholder="${abholvorschlagK}" style="margin-bottom:.5rem" />
+        ${kgFeld('sb-k-abgeholt', d.abgeholt, abholvorschlagK)}
         <label class="inp-label">Chargen (Produktionsdatum, kommagetrennt) — z.B. 1208, 1508</label>
         <input id="sb-k-chargen" class="inp" type="text" placeholder="z.B. 1208, 1508" value="${d.chargen || ''}" style="margin-bottom:.4rem" />
         ${chargenChips}
         ${k.naturalrAnspruch ? `<label class="inp-label" style="margin-top:.6rem">Naturalrückgabe abgeholt (kg) — Anspruch: ${k.naturalrAnspruch} kg</label>
-          <input id="sb-k-natabg" class="inp" type="number" step="0.1" min="0" inputmode="decimal" value="${d.naturalrAbgeholt || ''}" />` : '<input type="hidden" id="sb-k-natabg" value="0" />'}
+          ${kgFeld('sb-k-natabg', d.naturalrAbgeholt, '')}` : '<input type="hidden" id="sb-k-natabg" value="0" />'}
       </div>
     `;
   }
@@ -792,15 +808,15 @@
       <div class="card-section" style="padding:.7rem .8rem;margin-bottom:.8rem">
         <div style="font-weight:700;color:var(--gold);margin-bottom:.3rem">🧈 Butter</div>
         <div style="font-size:.9rem;padding-left:.5rem">
-          Abgeholt: <b>${bt.abgeholt||0} kg</b><br>
-          ${bt.naturalrAbgeholt ? 'Naturalrückgabe: <b>' + bt.naturalrAbgeholt + ' kg</b><br>' : ''}
+          Abgeholt: <b>${kgTxt(bt.abgeholt)} kg</b><br>
+          ${bt.naturalrAbgeholt ? 'Naturalrückgabe: <b>' + kgTxt(bt.naturalrAbgeholt) + ' kg</b><br>' : ''}
           ${chargenB ? 'Chargen: ' + chargenB + '<br>' : ''}
         </div>
         <div style="font-weight:700;color:var(--gold);margin:.7rem 0 .3rem">🧀 Käse</div>
         <div style="font-size:.9rem;padding-left:.5rem">
           Laib: <b>${k.klotze||0}</b><br>
-          Abgeholt: <b>${k.abgeholt||0} kg</b><br>
-          ${k.naturalrAbgeholt ? 'Naturalrückgabe: <b>' + k.naturalrAbgeholt + ' kg</b><br>' : ''}
+          Abgeholt: <b>${kgTxt(k.abgeholt)} kg</b><br>
+          ${k.naturalrAbgeholt ? 'Naturalrückgabe: <b>' + kgTxt(k.naturalrAbgeholt) + ' kg</b><br>' : ''}
           ${chargenK ? 'Chargen: ' + chargenK + '<br>' : ''}
         </div>
       </div>
@@ -840,11 +856,11 @@
         <div style="font-size:1rem;font-weight:700;color:var(--gold);margin-bottom:.4rem">${b.name}</div>
         <div style="font-weight:700;margin-bottom:.2rem">🧈 Butter</div>
         <div style="font-size:.9rem;padding-left:.5rem;margin-bottom:.5rem">
-          Abgeholt: <b>${bt.abgeholt||0} kg</b>${bt.naturalrAbgeholt ? ' · Naturalr.: <b>' + bt.naturalrAbgeholt + ' kg</b>' : ''}${bt.chargen ? '<br>Chargen: ' + bt.chargen : ''}
+          Abgeholt: <b>${kgTxt(bt.abgeholt)} kg</b>${bt.naturalrAbgeholt ? ' · Naturalr.: <b>' + kgTxt(bt.naturalrAbgeholt) + ' kg</b>' : ''}${bt.chargen ? '<br>Chargen: ' + bt.chargen : ''}
         </div>
         <div style="font-weight:700;margin-bottom:.2rem">🧀 Käse</div>
         <div style="font-size:.9rem;padding-left:.5rem;margin-bottom:.5rem">
-          Laib: <b>${k.klotze||0}</b> · Abgeholt: <b>${k.abgeholt||0} kg</b>${k.naturalrAbgeholt ? ' · Naturalr.: <b>' + k.naturalrAbgeholt + ' kg</b>' : ''}${k.chargen ? '<br>Chargen: ' + k.chargen : ''}
+          Laib: <b>${k.klotze||0}</b> · Abgeholt: <b>${kgTxt(k.abgeholt)} kg</b>${k.naturalrAbgeholt ? ' · Naturalr.: <b>' + kgTxt(k.naturalrAbgeholt) + ' kg</b>' : ''}${k.chargen ? '<br>Chargen: ' + k.chargen : ''}
         </div>
       </div>
       <div class="section-title">✍ Unterschrift</div>
@@ -1146,7 +1162,7 @@
     if(!woche) { alert('Woche nicht gefunden'); return; }
     const bauern = Object.entries(woche.bauern || {}).sort((a,b) => (a[1].name||'').localeCompare(b[1].name||''));
 
-    const fmt = (n) => n == null || n === 0 ? '' : String(Math.round(n * 10) / 10).replace('.', ',');
+    const fmt = (n) => n == null || n === 0 ? '' : kgTxt(n);
     const fmtI = (n) => n == null || n === 0 ? '' : String(n);
     const escapeHtml = (s) => String(s||'').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]);
 
@@ -1160,7 +1176,7 @@
       const butterGesamt = (bt.abgeholt||0) + (bt.naturalrAbgeholt||0);
       // v54.28: ALLE Unterschriften (jede Abholung einzeln quittiert), sonst letzte (Altdaten)
       const _abh = (b.abholungen || []).filter(a => a && a.signaturPng);
-      const _kg = (x) => x ? String(Math.round(x * 10) / 10).replace('.', ',') : '';
+      const _kg = (x) => x ? kgTxt(x) : '';
       const sigImg = _abh.length
         ? _abh.map(a => {
             const d = new Date(a.ts).toLocaleString('de-AT', {weekday:'short', day:'2-digit', month:'2-digit', hour:'2-digit', minute:'2-digit'});

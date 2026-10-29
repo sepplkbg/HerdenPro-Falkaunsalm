@@ -278,6 +278,7 @@ button,[onclick],[role="button"],a {
   margin-bottom:1.1rem;
 }
 .page-header h2{
+  min-width:0;overflow-wrap:break-word;hyphens:auto;-webkit-hyphens:auto;
   font-size:2.2rem;color:var(--gold);
   text-shadow:0 0 16px rgba(212,168,75,.3);
   letter-spacing:.3px;
