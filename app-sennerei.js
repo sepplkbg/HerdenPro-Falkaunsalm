@@ -1197,9 +1197,9 @@
               '<tbody>' + bauernRows + '</tbody>' +
             '</table>' +
           '</div>' +
-          '<div style="display:flex;gap:.5rem;margin-top:1rem">' +
-            '<button class="btn-secondary" style="flex:1" onclick="document.getElementById(\'sennerei-import-overlay\').remove()">Abbrechen</button>' +
-            '<button class="btn-primary" style="flex:1" onclick="sennereiImportBestaetigen()">✓ Woche speichern</button>' +
+          '<div style="display:flex;flex-wrap:wrap;gap:.5rem;margin-top:1rem">' +
+            '<button class="btn-secondary" style="flex:1 1 8rem;white-space:normal" onclick="document.getElementById(\'sennerei-import-overlay\').remove()">Abbrechen</button>' +
+            '<button class="btn-primary" style="flex:1 1 8rem;white-space:normal" onclick="sennereiImportBestaetigen()">✓ Woche speichern</button>' +
           '</div>' +
         '</div>' +
       '</div>';
