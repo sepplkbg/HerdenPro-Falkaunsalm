@@ -664,8 +664,8 @@
       tagesmilchHtml = '<div class="card-section" style="padding:.6rem;margin-bottom:.8rem;color:var(--text3);font-size:.85rem;text-align:center">Keine Kuh-Zuordnung für „' + b.name + '" gefunden</div>';
     }
     // Reste (Anspruch - Abgeholt) — wichtig bei mehrfach-Abholung
-    const restK = Math.max(0, Math.round(((k.zumAbholen||0) - (k.abgeholt||0)) * 10) / 10);
-    const restB = Math.max(0, Math.round(((bt.zumAbholen||0) - (bt.abgeholt||0)) * 10) / 10);
+    const restK = Math.max(0, Math.round(((k.zumAbholen||0) - (k.abgeholt||0)) * 100) / 100);
+    const restB = Math.max(0, Math.round(((bt.zumAbholen||0) - (bt.abgeholt||0)) * 100) / 100);
     // Historie einzelner Abholungen (falls mehrfach)
     const abholungen = (b.abholungen || []);
     const historieHtml = abholungen.length > 0 ? `
@@ -691,8 +691,8 @@
       <div class="section-title">📦 ${isAbgeholt ? 'Rest offen' : 'Zum Abholen'}</div>
       <div class="card-section" style="padding:.7rem;margin-bottom:.8rem">
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:.6rem;font-size:.9rem">
-          <div>🧀 <b>Käse:</b> ${isAbgeholt ? restK : (k.zumAbholen||0)} kg${isAbgeholt ? ' <span style="color:var(--text3);font-size:.75rem">von ' + (k.zumAbholen||0) + ' kg</span>' : ''}</div>
-          <div>🧈 <b>Butter:</b> ${isAbgeholt ? restB : (bt.zumAbholen||0)} kg${isAbgeholt ? ' <span style="color:var(--text3);font-size:.75rem">von ' + (bt.zumAbholen||0) + ' kg</span>' : ''}</div>
+          <div>🧀 <b>Käse:</b> ${kgTxt(isAbgeholt ? restK : (k.zumAbholen||0))} kg${isAbgeholt ? ' <span style="color:var(--text3);font-size:.75rem">von ' + kgTxt(k.zumAbholen) + ' kg</span>' : ''}</div>
+          <div>🧈 <b>Butter:</b> ${kgTxt(isAbgeholt ? restB : (bt.zumAbholen||0))} kg${isAbgeholt ? ' <span style="color:var(--text3);font-size:.75rem">von ' + kgTxt(bt.zumAbholen) + ' kg</span>' : ''}</div>
           ${k.naturalrAnspruch ? '<div style="color:#ff9632;font-size:.8rem">Naturalr. Käse: ' + k.naturalrAnspruch + ' kg</div>' : '<div></div>'}
           ${bt.naturalrAnspruch ? '<div style="color:#ff9632;font-size:.8rem">Naturalr. Butter: ' + bt.naturalrAnspruch + ' kg</div>' : '<div></div>'}
         </div>
@@ -913,8 +913,8 @@
 
       const kaeseUpdate = {
         klotze: (parseInt(kAlt.klotze) || 0) + zusatzK.klotze,
-        abgeholt: Math.round(((parseFloat(kAlt.abgeholt) || 0) + zusatzK.abgeholt) * 10) / 10,
-        naturalrAbgeholt: Math.round(((parseFloat(kAlt.naturalrAbgeholt) || 0) + zusatzK.naturalrAbgeholt) * 10) / 10,
+        abgeholt: Math.round(((parseFloat(kAlt.abgeholt) || 0) + zusatzK.abgeholt) * 100) / 100,
+        naturalrAbgeholt: Math.round(((parseFloat(kAlt.naturalrAbgeholt) || 0) + zusatzK.naturalrAbgeholt) * 100) / 100,
         chargen: _uniq([...(kAlt.chargen || []), ...zusatzK.chargen]),
         zumAbholen: kAlt.zumAbholen || 0,
         naturalrAnspruch: kAlt.naturalrAnspruch || 0,
@@ -922,8 +922,8 @@
       };
       const butterUpdate = {
         klotze: (parseInt(bkAlt.klotze) || 0) + zusatzB.klotze,
-        abgeholt: Math.round(((parseFloat(bkAlt.abgeholt) || 0) + zusatzB.abgeholt) * 10) / 10,
-        naturalrAbgeholt: Math.round(((parseFloat(bkAlt.naturalrAbgeholt) || 0) + zusatzB.naturalrAbgeholt) * 10) / 10,
+        abgeholt: Math.round(((parseFloat(bkAlt.abgeholt) || 0) + zusatzB.abgeholt) * 100) / 100,
+        naturalrAbgeholt: Math.round(((parseFloat(bkAlt.naturalrAbgeholt) || 0) + zusatzB.naturalrAbgeholt) * 100) / 100,
         chargen: _uniq([...(bkAlt.chargen || []), ...zusatzB.chargen]),
         zumAbholen: bkAlt.zumAbholen || 0,
         naturalrAnspruch: bkAlt.naturalrAnspruch || 0,
@@ -1362,7 +1362,7 @@
           <span style="color:var(--text3);font-size:.75rem">${status} ${datum}</span>
         </div>
         <div style="color:var(--text2);font-size:.75rem;margin-top:.15rem">
-          🧀 ${Math.round(kAbg*10)/10}kg${kNat?' (+ '+Math.round(kNat*10)/10+' Natur)':''} · 🧈 ${Math.round(btAbg*10)/10}kg${btNat?' (+ '+Math.round(btNat*10)/10+' Natur)':''}
+          🧀 ${kgTxt(kAbg)}kg${kNat?' (+ '+kgTxt(kNat)+' Natur)':''} · 🧈 ${kgTxt(btAbg)}kg${btNat?' (+ '+kgTxt(btNat)+' Natur)':''}
         </div>
       </div>`;
     }).join('');
