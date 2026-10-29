@@ -723,6 +723,7 @@ function renderKuhDetail() {
     </div>
   </div>
 
+  ${typeof hpLeistungsHinweiseHTML==='function'?hpLeistungsHinweiseHTML(id):''}
   <!-- Stats -->
   <div class="kd-s3" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:.4rem;margin-bottom:.75rem">
     <div class="kd-stat-card">
@@ -6557,7 +6558,10 @@ function renderSaisonvergleich() {
   return `
     <div class="page-header">
       <h2>📈 Herdenvergleich</h2>
-      <button class="btn-xs" onclick="saisonArchivieren()">💾 Archivieren</button>
+      <div style="display:flex;gap:.35rem;flex-wrap:wrap">
+        <button class="btn-xs" onclick="hpSaisonRueckblickPdf()">📄 Rückblick</button>
+        <button class="btn-xs" onclick="saisonArchivieren()">💾 Archivieren</button>
+      </div>
     </div>
 
     <!-- Tab-Chips -->
@@ -8221,6 +8225,8 @@ function renderBauerDetail() {
       <div class="history-title">#${k?.nr||''} ${k?.name||''} <span class="tag tag-green">Trächtig</span></div>
       ${bs.erwartetGeburt?`<div class="history-sub">Geburt erw.: ${new Date(bs.erwartetGeburt).toLocaleDateString('de-AT')}</div>`:''}
     </div>`;}).join('')}`:''}
+
+    ${typeof hpBauerVergleichHTML==='function'?hpBauerVergleichHTML(b.name):''}
 
     <!-- Notizen zum Bauern -->
     <div class="section-title" style="display:flex;justify-content:space-between;align-items:center">
