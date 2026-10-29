@@ -279,6 +279,7 @@ button,[onclick],[role="button"],a {
   margin-bottom:1.1rem;
 }
 .page-header>div{max-width:100%;flex-wrap:wrap}
+.btn-block{white-space:normal}
 .page-header button{white-space:normal;max-width:100%}
 .page-header h2{
   max-width:100%;overflow-wrap:break-word;hyphens:auto;-webkit-hyphens:auto;

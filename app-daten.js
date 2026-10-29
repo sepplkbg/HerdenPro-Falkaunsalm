@@ -256,7 +256,7 @@
 
   window.renderWiederherstellung = function() {
     setTimeout(whZeichnen, 0);
-    return '<div class="page-header"><h2>⏪ Wiederherstellungspunkte</h2></div>' +
+    return '<div class="page-header"><h2>⏪ Wiederherstellungs&shy;punkte</h2></div>' +
       '<p style="font-size:.8rem;color:var(--text3);margin:-.3rem 0 .7rem;line-height:1.5">Einmal pro Woche speichert die App automatisch den kompletten Datenstand (ohne Fotos und Chat). ' +
       'Die letzten ' + WH_BEHALTEN + ' bleiben erhalten. Beim Zurücksetzen wird vorher automatisch ein Punkt vom jetzigen Stand gemacht.</p>' +
       (istAdmin() ? '<button class="btn-primary btn-block" style="margin-bottom:.8rem" onclick="hpWhJetzt()">➕ Jetzt einen Punkt erstellen</button>' : '') +
