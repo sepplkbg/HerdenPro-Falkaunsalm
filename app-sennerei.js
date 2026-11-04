@@ -444,10 +444,29 @@
   let _wochenCache = null;   // null = noch nie geladen, [] = geladen aber leer
   let _wochenLoading = false;
 
+  let _wochenAlt = null;      // v54.59: letzter Stand bleibt sichtbar, während neu geladen wird
   window.sennereiInvalidateCache = function() {
+    if(_wochenCache) _wochenAlt = _wochenCache;
     _wochenCache = null;
     _wochenLoading = false;
   };
+  function _wochenNeuLaden() {
+    if(_wochenCache !== null || _wochenLoading) return;
+    _wochenLoading = true;
+    window._sennereiLadeFehler = null;
+    window.sennereiLadeWochen(w => {
+      _wochenLoading = false;
+      if(window._sennereiLadeFehler && _wochenAlt) return;   // Fehler: alten Stand behalten
+      _wochenCache = w || [];
+      _wochenAlt = null;
+      if(/^sennerei/.test(window.currentView || '') && typeof render === 'function') render();
+    });
+  }
+  // Woche suchen – auch während eines Neu-Ladens (z.B. nach App-Wechsel) nicht „nicht gefunden“
+  function findeWoche(id) {
+    if(_wochenCache === null) _wochenNeuLaden();
+    return (_wochenCache || _wochenAlt || []).find(w => w.id === id);
+  }
 
   window.renderSennerei = function() {
     // Nur EINMAL laden (nicht nach jedem render neu triggern → verhindert Flackern)
@@ -456,11 +475,12 @@
       window._sennereiLadeFehler = null;
       window.sennereiLadeWochen(w => {
         _wochenCache = w || [];
+        _wochenAlt = null;
         _wochenLoading = false;
         if(window.currentView === 'sennerei' && typeof render === 'function') render();
       });
     }
-    const wochen = _wochenCache || [];
+    const wochen = _wochenCache || _wochenAlt || [];
     return `
       <div class="page-header">
         <h2>📦 Sennerei-Abholung</h2>
@@ -480,7 +500,7 @@
       </div>
 
       <div class="section-title">Aktuelle & vergangene Wochen</div>
-      ${_wochenCache === null ? '<div class="empty-state">' + (window._sennereiOptimierung ? '⏳ Abholungen werden einmalig optimiert (Woche ' + window._sennereiOptimierung.i + ' von ' + window._sennereiOptimierung.n + ')…<br><span style="font-size:.8rem">Bitte App offen lassen.</span>' : '⏳ Lade Wochen…') + '</div>' :
+      ${(_wochenCache === null && !_wochenAlt) ? '<div class="empty-state">' + (window._sennereiOptimierung ? '⏳ Abholungen werden einmalig optimiert (Woche ' + window._sennereiOptimierung.i + ' von ' + window._sennereiOptimierung.n + ')…<br><span style="font-size:.8rem">Bitte App offen lassen.</span>' : '⏳ Lade Wochen…') + '</div>' :
         window._sennereiLadeFehler
           ? '<div class="empty-state">⚠ Wochen konnten nicht geladen werden (keine Verbindung?).<br><button class="btn-secondary" style="margin-top:.6rem" onclick="sennereiInvalidateCache();render()">↻ Nochmal versuchen</button></div>'
           : wochen.length === 0
@@ -520,7 +540,7 @@
 
   window.renderSennereiWoche = function() {
     const wid = window._sennereiAktiveWoche;
-    const woche = (_wochenCache || []).find(w => w.id === wid);
+    const woche = findeWoche(wid);
     if(!woche) {
       return `
         <div class="page-header"><h2>🥛 Sennerei-Woche</h2><button class="btn-secondary" onclick="navigate('sennerei')">← Zurück</button></div>
@@ -612,7 +632,7 @@
     // Bei ERSTER Abholung: mit bestehenden Werten (falls Import), sonst 0.
     // Bei NACHFOLGE-Abholung (bereits abgeholt): mit 0 starten — wir geben nur
     // die ZUSÄTZLICHE Menge ein, die dann zur Summe addiert wird.
-    const woche = (_wochenCache || []).find(w => w.id === window._sennereiAktiveWoche);
+    const woche = findeWoche(window._sennereiAktiveWoche);
     const b = woche && woche.bauern && woche.bauern[bid];
     const istNachfolge = !!(b && b.abgeholtAm);
     window._sennereiWizardData = {
@@ -749,7 +769,7 @@
   window.renderSennereiBauer = function() {
     const wid = window._sennereiAktiveWoche;
     const bid = window._sennereiAktiverBauer;
-    const woche = (_wochenCache || []).find(w => w.id === wid);
+    const woche = findeWoche(wid);
     if(!woche || !woche.bauern || !woche.bauern[bid]) {
       return `
         <div class="page-header"><h2>🥛 Bauer</h2><button class="btn-secondary" onclick="navigate('sennerei_woche')">← Zurück</button></div>
@@ -1069,7 +1089,7 @@
     const bid = window._sennereiAktiverBauer;
     const data = window._sennereiWizardData || {};
     if(!wid || !bid) return;
-    const woche = (_wochenCache || []).find(w => w.id === wid);
+    const woche = findeWoche(wid);
     if(!woche || !woche.bauern[bid]) { alert('Bauer nicht gefunden'); return; }
     if(!data.signaturPng) {
       if(!confirm('Keine Unterschrift vorhanden. Trotzdem speichern?')) return;
@@ -1292,7 +1312,7 @@
         const snap = await firebase.database().ref('sennerei/wochen/' + wid).once('value');
         woche = snap.val();
       }
-      if(!woche) woche = (_wochenCache || []).find(w => w.id === wid);
+      if(!woche) woche = findeWoche(wid);
       if(!woche) { alert('Woche nicht gefunden.'); return; }
       const r2 = v => Math.round((parseFloat(v) || 0) * 100) / 100;
       const teil = p => ({ abgeholt: r2(p && p.abgeholt), naturalrAbgeholt: r2(p && p.naturalrAbgeholt), chargen: (p && p.chargen) || [] });
@@ -1432,7 +1452,7 @@
   // PDF-DRUCK: Wochen-Übersicht (mit ausgefüllten Werten + Unterschriften)
   // ══════════════════════════════════════════════════════════════════════════════
   window.sennereiDruckeWoche = async function(wid) {
-    const woche = (_wochenCache || []).find(w => w.id === wid);
+    const woche = findeWoche(wid);
     if(!woche) { alert('Woche nicht gefunden'); return; }
     // Fenster sofort öffnen (sonst blockiert der Browser das Popup), dann Unterschriften laden
     const win = window.open('', '_blank');
