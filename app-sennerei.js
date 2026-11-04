@@ -20,7 +20,7 @@
   const _sigCache = {};          // { wid: { bid: { key: dataUrl } } }
   const _sigLaedt = {};
   function sigVerkleinern(canvas) {
-    const maxW = 480, maxH = 200;
+    const maxW = 600, maxH = 600;
     const f = Math.min(1, maxW / (canvas.width || 1), maxH / (canvas.height || 1));
     const c = document.createElement('canvas');
     c.width = Math.max(1, Math.round(canvas.width * f));
@@ -28,7 +28,7 @@
     const x = c.getContext('2d');
     x.fillStyle = '#ffffff'; x.fillRect(0, 0, c.width, c.height);
     x.drawImage(canvas, 0, 0, c.width, c.height);
-    return c.toDataURL('image/jpeg', 0.75);
+    return c.toDataURL('image/jpeg', 0.8);
   }
   async function ladeUnterschriften(wid) {
     if(_sigCache[wid]) return _sigCache[wid];
