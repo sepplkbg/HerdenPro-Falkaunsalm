@@ -12,6 +12,9 @@
   // ═══ A13: Was ist neu ═══════════════════════════════════════════════════
   // Neueste Version oben. Nur Punkte, die Nutzer merken.
   const CHANGELOG = [
+    { v: 'v54.59', punkte: [
+      'Sennerei-Abholung: Wochen laden wieder schnell – Unterschriften werden kleiner und getrennt gespeichert (einmalige Umstellung beim ersten Öffnen)'
+    ]},
     { v: 'v54.58', punkte: [
       'Sennerei-Abholung: Bei „Letzte Tagesmilch“ zählen nur noch Kühe, die gemolken werden – trockene Kühe stehen als „trocken“ da'
     ]},
