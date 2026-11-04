@@ -95,7 +95,10 @@
       for(let i = 0; i < keys.length; i++) {
         window._sennereiOptimierung = { i: i + 1, n: keys.length };
         if(window.currentView === 'sennerei' && typeof render === 'function') render();
-        const w = (await db.ref('sennerei/wochen/' + keys[i]).once('value')).val();
+        const w = (await Promise.race([
+          db.ref('sennerei/wochen/' + keys[i]).once('value'),
+          new Promise((_, rej) => setTimeout(() => rej(new Error('Zeitüberschreitung beim Optimieren')), 120000))
+        ])).val();
         const upd = auslagernUpdates(keys[i], w);
         if(Object.keys(upd).length) await db.ref().update(upd);
       }
