@@ -6929,8 +6929,8 @@ function renderBackup() {
       </div>
       <div id="saisonstart-status" style="margin-top:.5rem;font-size:.78rem;color:var(--text3)"></div>
       <div style="margin-top:.6rem;display:flex;gap:.4rem;flex-wrap:wrap">
-        <button class="btn-primary" onclick="almabrechnungEinlesen('kuehe')" title="Almabrechnung (.xlsm) hochladen: Bauern und Kühe aus dem Blatt Saisonstart">📥 Kühe aus Almabrechnung</button>
-        <button class="btn-secondary" onclick="allesFuerExcel()" title="Eine Datei mit allen Daten für die Almabrechnung (Excel)">📤 Alles für Excel</button>
+        <button class="btn-primary" style="white-space:normal;max-width:100%" onclick="almabrechnungEinlesen('kuehe')" title="Almabrechnung (.xlsm) hochladen: Bauern und Kühe aus dem Blatt Saisonstart">📥 Kühe aus Almabrechnung</button>
+        <button class="btn-secondary" style="white-space:normal;max-width:100%" onclick="allesFuerExcel()" title="Eine Datei mit allen Daten für die Almabrechnung (Excel)">📤 Alles für Excel</button>
       </div>
     </div>
 
