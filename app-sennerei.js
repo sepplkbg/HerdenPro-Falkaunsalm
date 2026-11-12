@@ -910,6 +910,12 @@
     // Handy-Tastatur: Feld nach dem Aufgehen der Tastatur sichtbar machen
     setTimeout(() => _kbPruefen(), 350);
   });
+  // Antippen eines Feldes öffnet den Block auch dann, wenn es schon den Fokus hatte
+  document.addEventListener('click', e => {
+    const el = e.target;
+    if(window.currentView !== 'sennerei_bauer' || !el || !el.dataset || !el.dataset.np) return;
+    if(!document.getElementById('hp-np') || _npId !== el.id) _npAuf(el);
+  });
   // Weiter-/Enter-Taste der Handy-Tastatur → nächstes Feld bzw. nächster Schritt
   document.addEventListener('keydown', e => {
     if(e.key !== 'Enter' || window.currentView !== 'sennerei_bauer') return;
@@ -995,7 +1001,7 @@
     const f = document.getElementById('sb-b-abgeholt');
     if(window.showSaveToast) window.showSaveToast('✓ ' + klotze + ' Klötze = ' + (f ? f.value : '') + ' kg Butter übernommen');
     const c = document.getElementById('sb-b-chargen');
-    if(c) c.focus();
+    if(c) { c.focus(); _npAuf(c); }
   };
 
   window.sennereiWizardWeiter = function() {
